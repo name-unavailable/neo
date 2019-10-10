@@ -1087,6 +1087,12 @@ namespace Neo.Shell
                     sslCert: Settings.Default.RPC.SslCert,
                     password: Settings.Default.RPC.SslCertPassword,
                     maxGasInvoke: Settings.Default.RPC.MaxGasInvoke);
+                system.StartRest(Settings.Default.Rest.BindAddress,
+                    Settings.Default.Rest.Port,
+                    wallet: Program.Wallet,
+                    sslCert: Settings.Default.Rest.SslCert,
+                    password: Settings.Default.Rest.SslCertPassword,
+                    maxGasInvoke: Settings.Default.Rest.MaxGasInvoke);
             }
         }
 
