@@ -20,6 +20,7 @@ using Neo.IO.Json;
 using Neo.Ledger;
 using Neo.Network.P2P;
 using Neo.Network.P2P.Payloads;
+using Neo.Network.RPC.Models;
 using Neo.Persistence;
 using Neo.Plugins;
 using Neo.SmartContract;
@@ -31,52 +32,11 @@ namespace Neo.Network.RPC
 {
     public sealed class RpcServer : QueryServer, IDisposable
     {
-        // private class CheckWitnessHashes : IVerifiable
-        // {
-        //     private readonly UInt160[] _scriptHashesForVerifying;
-        //     public Witness[] Witnesses { get; set; }
-        //     public int Size { get; }
-
-        //     public CheckWitnessHashes(UInt160[] scriptHashesForVerifying)
-        //     {
-        //         _scriptHashesForVerifying = scriptHashesForVerifying;
-        //     }
-
-        //     public void Serialize(BinaryWriter writer)
-        //     {
-        //         throw new NotImplementedException();
-        //     }
-
-        //     public void Deserialize(BinaryReader reader)
-        //     {
-        //         throw new NotImplementedException();
-        //     }
-
-        //     public void DeserializeUnsigned(BinaryReader reader)
-        //     {
-        //         throw new NotImplementedException();
-        //     }
-
-        //     public UInt160[] GetScriptHashesForVerifying(Snapshot snapshot)
-        //     {
-        //         return _scriptHashesForVerifying;
-        //     }
-
-        //     public void SerializeUnsigned(BinaryWriter writer)
-        //     {
-        //         throw new NotImplementedException();
-        //     }
-        // }
-
-        public Wallet Wallet { get; set; }
-        public long MaxGasInvoke { get; }
-
         private IWebHost host;
-        private readonly NeoSystem system;
 
         public RpcServer(NeoSystem system, Wallet wallet = null, long maxGasInvoke = default)
         {
-            this.system = system;
+            this.NeoSystem = system;
             this.Wallet = wallet;
             this.MaxGasInvoke = maxGasInvoke;
         }

@@ -2,6 +2,7 @@ using Akka.Actor;
 using Neo.Consensus;
 using Neo.Ledger;
 using Neo.Network.P2P;
+using Neo.Network.Restful;
 using Neo.Network.RPC;
 using Neo.Persistence;
 using Neo.Plugins;
@@ -25,6 +26,7 @@ namespace Neo
         internal IActorRef TaskManager { get; }
         public IActorRef Consensus { get; private set; }
         public RpcServer RpcServer { get; private set; }
+        public RestServer RestServer { get; private set; }
 
         private readonly Store store;
         private ChannelsConfig start_message = null;
@@ -89,6 +91,13 @@ namespace Neo
         {
             RpcServer = new RpcServer(this, wallet, maxGasInvoke);
             RpcServer.Start(bindAddress, port, sslCert, password, trustedAuthorities);
+        }
+
+        public void StartRest(IPAddress bindAddress, int port, Wallet wallet = null, string sslCert = null, string password = null,
+            string[] trustedAuthorities = null, long maxGasInvoke = default)
+        {
+            RestServer = new RestServer(this, wallet, maxGasInvoke);
+            RestServer.Start(bindAddress, port, sslCert, password, trustedAuthorities);
         }
 
         internal void SuspendNodeStartup()

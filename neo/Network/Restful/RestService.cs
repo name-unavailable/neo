@@ -1,14 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using Neo.IO.Json;
-using Neo.SmartContract;
 using Neo.Network.P2P.Payloads;
-
+using Neo.Network.RPC.Models;
+using Neo.SmartContract;
+using Neo.Wallets;
 
 namespace Neo.Network.Restful
 {
     public class RestService : QueryServer, IRestService
     {
+        public RestService(NeoSystem system, Wallet wallet = null, long maxGasInvoke = default)
+        {
+            this.NeoSystem = system;
+            this.Wallet = wallet;
+            this.MaxGasInvoke = maxGasInvoke;
+        }
+
         public new ActionResult<JObject> GetBestBlockHash() => base.GetBestBlockHash();
 
         public new ActionResult<JObject> GetBlock(JObject key, bool verbose) => base.GetBlock(key, verbose);
@@ -40,7 +47,7 @@ namespace Neo.Network.Restful
         public ActionResult<JObject> InvokeScript(byte[] script, UInt160[] scriptHashesForVerifying)
         {
             CheckWitnessHashes checkWitnessHashes = null;
-            if(scriptHashesForVerifying != null)
+            if (scriptHashesForVerifying != null)
             {
                 checkWitnessHashes = new CheckWitnessHashes(scriptHashesForVerifying);
             }

@@ -1,63 +1,28 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Akka.Actor;
 using Neo.IO;
 using Neo.IO.Json;
 using Neo.Ledger;
 using Neo.Network.P2P;
 using Neo.Network.P2P.Payloads;
+using Neo.Network.RPC;
+using Neo.Network.RPC.Models;
 using Neo.Persistence;
 using Neo.Plugins;
 using Neo.SmartContract;
 using Neo.SmartContract.Native;
 using Neo.VM;
 using Neo.Wallets;
-using Neo.Network.RPC;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Neo.Network
 {
     public class QueryServer
     {
-        protected class CheckWitnessHashes : IVerifiable
-        {
-            private readonly UInt160[] _scriptHashesForVerifying;
-            public Witness[] Witnesses { get; set; }
-            public int Size { get; }
-
-            public CheckWitnessHashes(UInt160[] scriptHashesForVerifying)
-            {
-                _scriptHashesForVerifying = scriptHashesForVerifying;
-            }
-
-            public void Serialize(BinaryWriter writer)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void Deserialize(BinaryReader reader)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void DeserializeUnsigned(BinaryReader reader)
-            {
-                throw new NotImplementedException();
-            }
-
-            public UInt160[] GetScriptHashesForVerifying(Snapshot snapshot)
-            {
-                return _scriptHashesForVerifying;
-            }
-
-            public void SerializeUnsigned(BinaryWriter writer)
-            {
-                throw new NotImplementedException();
-            }
-        }
-        private readonly NeoSystem system;
-        public long MaxGasInvoke { get; }
+        public Wallet Wallet { get; set; }
+        public long MaxGasInvoke { get; protected set; }
+        public NeoSystem NeoSystem { get; protected set; }
 
         protected JObject GetBestBlockHash()
         {
@@ -287,13 +252,13 @@ namespace Neo.Network
 
         protected JObject SendRawTransaction(Transaction tx)
         {
-            RelayResultReason reason = system.Blockchain.Ask<RelayResultReason>(tx).Result;
+            RelayResultReason reason = NeoSystem.Blockchain.Ask<RelayResultReason>(tx).Result;
             return GetRelayResult(reason, tx.Hash);
         }
 
         protected JObject SubmitBlock(Block block)
         {
-            RelayResultReason reason = system.Blockchain.Ask<RelayResultReason>(block).Result;
+            RelayResultReason reason = NeoSystem.Blockchain.Ask<RelayResultReason>(block).Result;
             return GetRelayResult(reason, block.Hash);
         }
 
@@ -332,7 +297,7 @@ namespace Neo.Network
             return json;
         }
 
-         private static JObject GetRelayResult(RelayResultReason reason, UInt256 hash)
+        private static JObject GetRelayResult(RelayResultReason reason, UInt256 hash)
         {
             switch (reason)
             {

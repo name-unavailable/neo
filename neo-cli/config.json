@@ -1,0 +1,32 @@
+{
+  "ApplicationConfiguration": {
+    "Paths": {
+      "Chain": "Chain_{0}"
+    },
+    "P2P": {
+      "Port": 20333,
+      "WsPort": 20334
+    },
+    "RPC": {
+      "BindAddress": "127.0.0.1",
+      "Port": 20332,
+      "SslCert": "",
+      "SslCertPassword": "",
+      "MaxGasInvoke": 10
+    },
+    "Rest": {
+      "BindAddress": "127.0.0.1",
+      "Port": 20335,
+      "SslCert": "",
+      "SslCertPassword": "",
+      "MaxGasInvoke": 10
+    },
+    "UnlockWallet": {
+      "Path": "1-3.json",
+      "Password": "1111",
+      "StartConsensus": false,
+      "IsActive": true
+    },
+    "PluginURL": "https://github.com/neo-project/neo-plugins/releases/download/v{1}/{0}.zip"
+  }
+}
