@@ -5,7 +5,8 @@ using Neo.IO.Json;
 using Neo.Network.P2P.Payloads;
 using Neo.SmartContract;
 using System.Linq;
-using Neo.Persistence;
+using System.Text;
+using System;
 
 namespace Neo.Network.Restful
 {
@@ -20,46 +21,87 @@ namespace Neo.Network.Restful
             _restService = restService;
         }
 
+
+        /// <summary>
+        /// Get the lastest block hash of the blockchain 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("blocks/bestblockhash")]
-        public ActionResult<JObject> GetBestBlockHash()
+        public ActionResult<string> GetBestBlockHash()
         {
             return _restService.GetBestBlockHash();
         }
 
-        [HttpGet("blocks/{index}/{verbose?}")]
-        public ActionResult<JObject> GetBlock(JObject index, int verbose = 0)
+
+        /// <summary>
+        /// Get a block at a certain height or with the specified hash
+        /// </summary>
+        /// <param name="index">block height or block hash</param>
+        /// <param name="verbose">0:get block serialized in hexstring; 1: get block in Json format</param>
+        /// <returns></returns>
+        [HttpGet("blocks/{indexorhash}/{verbose}")]
+        public ActionResult<JObject> GetBlock(string indexorhash, int verbose)
         {
+            JObject _key = JObject.Parse(indexorhash);
             bool isVerbose = verbose == 0 ? false :true;
-            return _restService.GetBlock(index, isVerbose);
+            return _restService.GetBlock(_key, isVerbose);
         }
 
+        /// <summary>
+        /// Get the block count of the blockchain
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("blocks/count")]
-        public ActionResult<JObject> GetBlockCount()
+        public ActionResult<double> GetBlockCount()
         {
             return _restService.GetBlockCount();
         }
 
+
+        /// <summary>
+        /// Get the block hash with the specified index
+        /// </summary>
+        /// <param name="index">block height</param>
+        /// <returns></returns>
         [HttpGet("blocks/{index}/hash")]
-        public ActionResult<JObject> GetBlockHash(string index)
+        public ActionResult<string> GetBlockHash(uint index)
         {
-            uint height = uint.Parse(index);
-            return _restService.GetBlockHash(height);
+            return _restService.GetBlockHash(index);
         }
 
-        [HttpGet("blocks/{index}/header/{verbose?}")]
-        public ActionResult<JObject> GetBlockHeader(JObject index, int verbose = 0)
+
+        /// <summary>
+        /// Get the block header with the specified hash
+        /// </summary>
+        /// <param name="index">block height</param>
+        /// <param name="verbose">0:get block serialized in hexstring; 1: get block in Json format</param>
+        /// <returns></returns>
+        [HttpGet("blocks/{index}/header/{verbose}")]
+        public ActionResult<JObject> GetBlockHeader(uint index, int verbose = 0)
         {
+
             bool isVerbose = verbose == 0 ? false : true;
             return _restService.GetBlockHeader(index, isVerbose);
         }
 
+
+        /// <summary>
+        /// Get the system fees before the block with the specified index
+        /// </summary>
+        /// <param name="index">block height</param>
+        /// <returns></returns>
         [HttpGet("blocks/{index}/sysfee")]
-        public ActionResult<JObject> GetBlockSysFee(string index)
+        public ActionResult<string> GetBlockSysFee(uint index)
         {
-            uint height = uint.Parse(index);
-            return _restService.GetBlockSysFee(height);
+            return _restService.GetBlockSysFee(index);
         }
 
+
+        /// <summary>
+        /// Get a contract with the specified script hash
+        /// </summary>
+        /// <param name="scriptHash">contract scriptHash</param>
+        /// <returns></returns>
         [HttpGet("contracts/{scriptHash}")]
         public ActionResult<JObject> GetContractState(string scriptHash)
         {
@@ -67,14 +109,27 @@ namespace Neo.Network.Restful
             return _restService.GetContractState(script_hash);
         }
 
-        [HttpGet("network/localnode/rawmempool/{getUnverified?}")]
+
+        /// <summary>
+        /// Gets unconfirmed transactions in memory
+        /// </summary>
+        /// <param name="getUnverified">0: get all transactions; 1: get verified transactions</param>
+        /// <returns></returns>
+        [HttpGet("network/localnode/rawmempool/{getUnverified}")]
         public ActionResult<JObject> GetRawMemPool(int getUnverified = 0)
         {
             bool shouldGetUnverified = getUnverified == 0 ? false : true;
             return _restService.GetRawMemPool(shouldGetUnverified);
         }
 
-        [HttpGet("transactions/{txid}/{verbose?}")]
+
+        /// <summary>
+        /// Get a transaction with the specified hash value	
+        /// </summary>
+        /// <param name="txid">transaction hash</param>
+        /// <param name="verbose">0:get block serialized in hexstring; 1: get block in Json format</param>
+        /// <returns></returns>
+        [HttpGet("transactions/{txid}/{verbose}")]
         public ActionResult<JObject> GetRawTransaction(string txid, int verbose = 0)
         {
             UInt256 hash = UInt256.Parse(txid);
@@ -82,6 +137,13 @@ namespace Neo.Network.Restful
             return _restService.GetRawTransaction(hash, isVerbose);
         }
 
+
+        /// <summary>
+        /// Get the stored value with the contract script hash and the key
+        /// </summary>
+        /// <param name="scriptHash">contract scriptHash</param>
+        /// <param name="key">stored key</param>
+        /// <returns></returns>
         [HttpGet("contracts/{scriptHash}/storage/{key}/value")]
         public ActionResult<JObject> GetStorage(string scriptHash, string key)
         {
@@ -89,6 +151,12 @@ namespace Neo.Network.Restful
             return _restService.GetStorage(script_hash, key.HexToBytes());
         }
 
+
+        /// <summary>
+        /// Get the block index in which the transaction is found
+        /// </summary>
+        /// <param name="txid">transaction hash</param>
+        /// <returns></returns>
         [HttpGet("transactions/{txid}/height")]
         public ActionResult<JObject> GetTransactionHeight(string txid)
         {
@@ -96,18 +164,34 @@ namespace Neo.Network.Restful
             return _restService.GetTransactionHeight(hash);
         }
 
+
+        /// <summary>
+        /// Get latest validators
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("validators/latest")]
-        public ActionResult<JObject> GetValidators(string assetId)
+        public ActionResult<JObject> GetValidators()
         {
             return _restService.GetValidators();
         }
 
+
+        /// <summary>
+        /// Get version of the connected node
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("network/localnode/version")]
         public ActionResult<JObject> GetVersion()
         {
             return _restService.GetVersion();
         }
 
+
+        /// <summary>
+        /// Invoke a smart contract with specified script hash, passing in an operation and the corresponding params	
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         [HttpPost("contracts/invokingfunction")]
         public ActionResult<JObject> InvokeFunction(dynamic param)
         {
@@ -117,6 +201,12 @@ namespace Neo.Network.Restful
             return _restService.InvokeFunction(script_hash, operation, args);
         }
 
+
+        /// <summary>
+        /// Run a script through the virtual machine and get the result
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         [HttpPost("contracts/invokingscript")]
         public ActionResult<JObject> InvokeScript(dynamic param)
         {
@@ -128,12 +218,23 @@ namespace Neo.Network.Restful
             return _restService.InvokeScript(script, scriptHashesForVerifying);
         }
 
+
+        /// <summary>
+        /// Get plugins loaded by the node
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("network/localnode/plugins")]
         public ActionResult<JObject> ListPlugins()
         {
             return _restService.ListPlugins();
         }
 
+
+        /// <summary>
+        /// Broadcast a transaction over the network
+        /// </summary>
+        /// <param name="hex">hexstring of the transaction</param>
+        /// <returns></returns>
         [HttpGet("transactions/broadcasting/{hex}")]
         public ActionResult<JObject> SendRawTransaction(string hex)
         {
@@ -141,6 +242,12 @@ namespace Neo.Network.Restful
             return _restService.SendRawTransaction(tx);
         }
 
+
+        /// <summary>
+        /// Relay a new block to the network
+        /// </summary>
+        /// <param name="hex">hexstring of the block</param>
+        /// <returns></returns>
         [HttpGet("validators/submitblock/{hex}")]
         public ActionResult<JObject> SubmitBlock(string hex)
         {
@@ -148,6 +255,12 @@ namespace Neo.Network.Restful
             return _restService.SubmitBlock(block);
         }
 
+
+        /// <summary>
+        /// Verify whether the address is a correct NEO address	
+        /// </summary>
+        /// <param name="address">address to be veirifed</param>
+        /// <returns></returns>
         [HttpGet("wallets/verifyingaddress/{address}")]
         public ActionResult<JObject> ValidateAddress(string address)
         {

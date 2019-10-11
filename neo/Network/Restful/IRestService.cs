@@ -7,17 +7,17 @@ namespace Neo.Network.Restful
 {
     public interface IRestService
     {
-         ActionResult<JObject> GetBestBlockHash();
+         ActionResult<string> GetBestBlockHash();
 
          ActionResult<JObject> GetBlock(JObject key, bool verbose);
 
-         ActionResult<JObject> GetBlockCount();
+         ActionResult<double> GetBlockCount();
 
-         ActionResult<JObject> GetBlockHash(uint height);
+         ActionResult<string> GetBlockHash(uint height);
 
          ActionResult<JObject> GetBlockHeader(JObject key, bool verbose);
 
-         ActionResult<JObject> GetBlockSysFee(uint height);
+         ActionResult<string> GetBlockSysFee(uint height);
 
          ActionResult<JObject> GetContractState(UInt160 script_hash);
 

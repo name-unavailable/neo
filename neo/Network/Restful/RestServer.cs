@@ -56,6 +56,27 @@ namespace Neo.Network.Restful
                     };
                 });
             }))
+            .ConfigureServices(services =>
+            {
+                services.AddSwaggerGen(option =>
+                {
+                    option.SwaggerDoc("v1", new Info
+                    {
+                        Title = "Neo Rest API",
+                        Version = "v1"
+                    });
+                    /**
+                    var basePath = AppContext.BaseDirectory;
+                    var assemblyName = System.Reflection.Assembly.GetEntryAssembly().GetName().Name;
+                    var fileName = System.IO.Path.GetFileName(assemblyName + ".xml");
+                    option.IncludeXmlComments(System.IO.Path.Combine(basePath, fileName));
+                    **/
+                });
+
+                services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+                services.AddScoped<IRestService, RestService>(s => new RestService(system, Wallet, MaxGasInvoke));
+            })
             .Configure(app =>
             {
                 //app.UseHttpsRedirection();
@@ -69,21 +90,6 @@ namespace Neo.Network.Restful
                 });
 
                 app.UseMvc();
-            })
-            .ConfigureServices(services =>
-            {
-                services.AddSwaggerGen(option =>
-                {
-                    option.SwaggerDoc("v1", new Info
-                    {
-                        Title = "Neo Rest API",
-                        Version = "v1"
-                    });
-                });
-
-                services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
-                services.AddScoped<IRestService, RestService>(s => new RestService(system, Wallet, MaxGasInvoke));
             })
             .Build();
 

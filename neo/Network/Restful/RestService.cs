@@ -4,6 +4,7 @@ using Neo.Network.P2P.Payloads;
 using Neo.Network.RPC.Models;
 using Neo.SmartContract;
 using Neo.Wallets;
+using System;
 
 namespace Neo.Network.Restful
 {
@@ -16,17 +17,20 @@ namespace Neo.Network.Restful
             this.MaxGasInvoke = maxGasInvoke;
         }
 
-        public new ActionResult<JObject> GetBestBlockHash() => base.GetBestBlockHash();
+        public new ActionResult<string> GetBestBlockHash() => base.GetBestBlockHash().AsString();
 
-        public new ActionResult<JObject> GetBlock(JObject key, bool verbose) => base.GetBlock(key, verbose);
+        public new ActionResult<JObject> GetBlock(JObject key, bool verbose)
+        {
+            return base.GetBlock(key, verbose);
+        }
 
-        public new ActionResult<JObject> GetBlockCount() => base.GetBlockCount();
+        public new ActionResult<double> GetBlockCount() => base.GetBlockCount().AsNumber();
 
-        public new ActionResult<JObject> GetBlockHash(uint height) => base.GetBlockHash(height);
+        public new ActionResult<string> GetBlockHash(uint height) => base.GetBlockHash(height).AsString();
 
         public new ActionResult<JObject> GetBlockHeader(JObject key, bool verbose) => base.GetBlockHeader(key, verbose);
 
-        public new ActionResult<JObject> GetBlockSysFee(uint height) => base.GetBlockSysFee(height);
+        public new ActionResult<string> GetBlockSysFee(uint height) => base.GetBlockSysFee(height).AsString();
 
         public new ActionResult<JObject> GetContractState(UInt160 script_hash) => base.GetContractState(script_hash);
 
