@@ -27,7 +27,7 @@ namespace Neo.Network.Restful
 
          ActionResult<JObject> GetStorage(UInt160 script_hash, byte[] key);
 
-         ActionResult<JObject> GetTransactionHeight(UInt256 hash);
+         ActionResult<double> GetTransactionHeight(UInt256 hash);
 
          ActionResult<JObject> GetValidators();
 

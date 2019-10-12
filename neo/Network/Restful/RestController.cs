@@ -1,12 +1,10 @@
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Neo.IO;
 using Neo.IO.Json;
 using Neo.Network.P2P.Payloads;
 using Neo.SmartContract;
 using System.Linq;
-using System.Text;
-using System;
+using Neo.Network.RPC;
 
 namespace Neo.Network.Restful
 {
@@ -26,7 +24,9 @@ namespace Neo.Network.Restful
         /// Get the lastest block hash of the blockchain 
         /// </summary>
         /// <returns></returns>
+        /// <response code="200">block hash</response>
         [HttpGet("blocks/bestblockhash")]
+        [ProducesResponseType(typeof(string), 200)]
         public ActionResult<string> GetBestBlockHash()
         {
             return _restService.GetBestBlockHash();
@@ -39,7 +39,13 @@ namespace Neo.Network.Restful
         /// <param name="index">block height or block hash</param>
         /// <param name="verbose">0:get block serialized in hexstring; 1: get block in Json format</param>
         /// <returns></returns>
+        /// <response code="200">block information</response>
+        /// <response code="400">Unknown Block</response>
+        /// <response code="500">Format Invalid</response>
         [HttpGet("blocks/{indexorhash}/{verbose}")]
+        [ProducesResponseType(typeof(JObject), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         public ActionResult<JObject> GetBlock(string indexorhash, int verbose)
         {
             JObject _key = JObject.Parse(indexorhash);
@@ -51,7 +57,9 @@ namespace Neo.Network.Restful
         /// Get the block count of the blockchain
         /// </summary>
         /// <returns></returns>
+        /// <response code="200">block count</response>
         [HttpGet("blocks/count")]
+        [ProducesResponseType(typeof(double), 200)]
         public ActionResult<double> GetBlockCount()
         {
             return _restService.GetBlockCount();
@@ -63,7 +71,11 @@ namespace Neo.Network.Restful
         /// </summary>
         /// <param name="index">block height</param>
         /// <returns></returns>
+        /// <response code="200">Block Hash</response>
+        /// <response code="400">Invalid Height</response>
         [HttpGet("blocks/{index}/hash")]
+        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(400)]
         public ActionResult<string> GetBlockHash(uint index)
         {
             return _restService.GetBlockHash(index);
@@ -76,7 +88,11 @@ namespace Neo.Network.Restful
         /// <param name="index">block height</param>
         /// <param name="verbose">0:get block serialized in hexstring; 1: get block in Json format</param>
         /// <returns></returns>
+        /// <response code="200">block header</response>
+        /// <response code="400">Unknown Block</response>
         [HttpGet("blocks/{index}/header/{verbose}")]
+        [ProducesResponseType(typeof(JObject), 200)]
+        [ProducesResponseType(400)]
         public ActionResult<JObject> GetBlockHeader(uint index, int verbose = 0)
         {
 
@@ -90,7 +106,11 @@ namespace Neo.Network.Restful
         /// </summary>
         /// <param name="index">block height</param>
         /// <returns></returns>
+        /// <response code="200">Block System Fee</response>
+        /// <response code="400">Invalid Height</response>
         [HttpGet("blocks/{index}/sysfee")]
+        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(400)]
         public ActionResult<string> GetBlockSysFee(uint index)
         {
             return _restService.GetBlockSysFee(index);
@@ -102,7 +122,11 @@ namespace Neo.Network.Restful
         /// </summary>
         /// <param name="scriptHash">contract scriptHash</param>
         /// <returns></returns>
+        /// <response code="200">Contract State</response>
+        /// <response code="400">Unknown contract</response>
         [HttpGet("contracts/{scriptHash}")]
+        [ProducesResponseType(typeof(JObject), 200)]
+        [ProducesResponseType(400)]
         public ActionResult<JObject> GetContractState(string scriptHash)
         {
             UInt160 script_hash = UInt160.Parse(scriptHash);
@@ -115,7 +139,9 @@ namespace Neo.Network.Restful
         /// </summary>
         /// <param name="getUnverified">0: get all transactions; 1: get verified transactions</param>
         /// <returns></returns>
+        /// <response code="200">Transactions in Memory Pool</response>
         [HttpGet("network/localnode/rawmempool/{getUnverified}")]
+        [ProducesResponseType(typeof(JObject), 200)]
         public ActionResult<JObject> GetRawMemPool(int getUnverified = 0)
         {
             bool shouldGetUnverified = getUnverified == 0 ? false : true;
@@ -129,7 +155,11 @@ namespace Neo.Network.Restful
         /// <param name="txid">transaction hash</param>
         /// <param name="verbose">0:get block serialized in hexstring; 1: get block in Json format</param>
         /// <returns></returns>
+        /// <response code="200">Transaction Information</response>
+        /// <response code="400">Unknown Transaction</response>
         [HttpGet("transactions/{txid}/{verbose}")]
+        [ProducesResponseType(typeof(JObject), 200)]
+        [ProducesResponseType(400)]
         public ActionResult<JObject> GetRawTransaction(string txid, int verbose = 0)
         {
             UInt256 hash = UInt256.Parse(txid);
@@ -144,7 +174,9 @@ namespace Neo.Network.Restful
         /// <param name="scriptHash">contract scriptHash</param>
         /// <param name="key">stored key</param>
         /// <returns></returns>
+        /// <response code="200">Stored Value</response>
         [HttpGet("contracts/{scriptHash}/storage/{key}/value")]
+        [ProducesResponseType(typeof(JObject), 200)]
         public ActionResult<JObject> GetStorage(string scriptHash, string key)
         {
             UInt160 script_hash = UInt160.Parse(scriptHash);
@@ -157,8 +189,12 @@ namespace Neo.Network.Restful
         /// </summary>
         /// <param name="txid">transaction hash</param>
         /// <returns></returns>
+        /// <response code="200">Transaction Height</response>
+        /// <response code="400">Unknown Transaction</response>
         [HttpGet("transactions/{txid}/height")]
-        public ActionResult<JObject> GetTransactionHeight(string txid)
+        [ProducesResponseType(typeof(double), 200)]
+        [ProducesResponseType(400)]
+        public ActionResult<double> GetTransactionHeight(string txid)
         {
             UInt256 hash = UInt256.Parse(txid);
             return _restService.GetTransactionHeight(hash);
@@ -169,7 +205,9 @@ namespace Neo.Network.Restful
         /// Get latest validators
         /// </summary>
         /// <returns></returns>
+        /// <response code="200">Latest Validators</response>
         [HttpGet("validators/latest")]
+        [ProducesResponseType(typeof(double), 200)]
         public ActionResult<JObject> GetValidators()
         {
             return _restService.GetValidators();
@@ -180,7 +218,9 @@ namespace Neo.Network.Restful
         /// Get version of the connected node
         /// </summary>
         /// <returns></returns>
+        /// <response code="200">Node Version</response>
         [HttpGet("network/localnode/version")]
+        [ProducesResponseType(typeof(JObject), 200)]
         public ActionResult<JObject> GetVersion()
         {
             return _restService.GetVersion();
@@ -223,7 +263,9 @@ namespace Neo.Network.Restful
         /// Get plugins loaded by the node
         /// </summary>
         /// <returns></returns>
+        /// <response code="200">Plugins Loaded</response>
         [HttpGet("network/localnode/plugins")]
+        [ProducesResponseType(typeof(JObject), 200)]
         public ActionResult<JObject> ListPlugins()
         {
             return _restService.ListPlugins();
@@ -261,7 +303,9 @@ namespace Neo.Network.Restful
         /// </summary>
         /// <param name="address">address to be veirifed</param>
         /// <returns></returns>
+        /// <response code="200">Verification Result</response>
         [HttpGet("wallets/verifyingaddress/{address}")]
+        [ProducesResponseType(typeof(JObject), 200)]
         public ActionResult<JObject> ValidateAddress(string address)
         {
             return _restService.ValidateAddress(address);

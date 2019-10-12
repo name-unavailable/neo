@@ -6,10 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Neo.Wallets;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+
 
 namespace Neo.Network.Restful
 {
@@ -65,12 +67,7 @@ namespace Neo.Network.Restful
                         Title = "Neo Rest API",
                         Version = "v1"
                     });
-                    /**
-                    var basePath = AppContext.BaseDirectory;
-                    var assemblyName = System.Reflection.Assembly.GetEntryAssembly().GetName().Name;
-                    var fileName = System.IO.Path.GetFileName(assemblyName + ".xml");
-                    option.IncludeXmlComments(System.IO.Path.Combine(basePath, fileName));
-                    **/
+                    option.IncludeXmlComments(System.String.Format(@"{0}\neo-cli\bin\Debug\netcoreapp2.1\neo-cli.xml", System.AppDomain.CurrentDomain.BaseDirectory)); ///
                 });
 
                 services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
