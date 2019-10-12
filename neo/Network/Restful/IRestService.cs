@@ -1,81 +1,80 @@
-using Neo.Network.P2P.Payloads;
 using Neo.IO.Json;
+using Neo.Network.P2P.Payloads;
 using Neo.SmartContract;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Neo.Network.Restful
 {
     public interface IRestService
     {
-         ActionResult<string> GetBestBlockHash();
+        string GetBestBlockHash();
 
-         ActionResult<JObject> GetBlock(JObject key, bool verbose);
+        JObject GetBlock(JObject key, bool verbose);
 
-         ActionResult<double> GetBlockCount();
+        double GetBlockCount();
 
-         ActionResult<string> GetBlockHash(uint height);
+        string GetBlockHash(uint height);
 
-         ActionResult<JObject> GetBlockHeader(JObject key, bool verbose);
+        JObject GetBlockHeader(JObject key, bool verbose);
 
-         ActionResult<string> GetBlockSysFee(uint height);
+        string GetBlockSysFee(uint height);
 
-         ActionResult<JObject> GetContractState(UInt160 script_hash);
+        JObject GetContractState(UInt160 script_hash);
 
-         ActionResult<JObject> GetRawMemPool(bool shouldGetUnverified);
+        JObject GetRawMemPool(bool shouldGetUnverified);
 
-         ActionResult<JObject> GetRawTransaction(UInt256 hash, bool verbose);
+        JObject GetRawTransaction(UInt256 hash, bool verbose);
 
-         ActionResult<JObject> GetStorage(UInt160 script_hash, byte[] key);
+        JObject GetStorage(UInt160 script_hash, byte[] key);
 
-         ActionResult<double> GetTransactionHeight(UInt256 hash);
+        double GetTransactionHeight(UInt256 hash);
 
-         ActionResult<JObject> GetValidators();
+        JObject GetValidators();
 
-         ActionResult<JObject> GetVersion();
+        JObject GetVersion();
 
-         ActionResult<JObject> InvokeFunction(UInt160 script_hash, string operation, ContractParameter[] args);
+        JObject InvokeFunction(UInt160 script_hash, string operation, ContractParameter[] args);
 
-         ActionResult<JObject> InvokeScript(byte[] script, UInt160[] scriptHashesForVerifying);
+        JObject InvokeScript(byte[] script, UInt160[] scriptHashesForVerifying);
 
-         ActionResult<JObject> ListPlugins();
+        JObject ListPlugins();
 
-        ActionResult<JObject> SendRawTransaction(Transaction tx);
+        JObject SendRawTransaction(Transaction tx);
 
-         ActionResult<JObject> SubmitBlock(Block block);
+        JObject SubmitBlock(Block block);
 
-         ActionResult<JObject> ValidateAddress(string address);
+        JObject ValidateAddress(string address);
 
-        //  ActionResult<ActionResult<JObject>> GetAccountState();
+        //  JObject GetAccountState();
 
-        //  ActionResult<ActionResult<JObject>> ListAddress();
+        //  JObject ListAddress();
 
-        //  ActionResult<ActionResult<JObject>> ImportPrivKey();
+        //  JObject ImportPrivKey();
 
-        //  ActionResult<ActionResult<JObject>> ClaimGas();
+        //  JObject ClaimGas();
 
-        //  ActionResult<ActionResult<JObject>> GetWalletHeight();
+        //  JObject GetWalletHeight();
 
-        //  ActionResult<ActionResult<JObject>> GetNewAddress();
+        //  JObject GetNewAddress();
 
-        //  ActionResult<ActionResult<JObject>> GetUnclaimedGas();
+        //  JObject GetUnclaimedGas();
 
-        //  ActionResult<ActionResult<JObject>> GetAllUnclaimedGas();
+        //  JObject GetAllUnclaimedGas();
 
-        //  ActionResult<ActionResult<JObject>> GetAssetBalance();
+        //  JObject GetAssetBalance();
 
-        //  ActionResult<ActionResult<JObject>> GetAssetState();
+        //  JObject GetAssetState();
 
-        //  ActionResult<ActionResult<JObject>> GetClaimbleGas();
+        //  JObject GetClaimbleGas();
 
-        //  ActionResult<ActionResult<JObject>> GetNep5Balance();
+        //  JObject GetNep5Balance();
 
-        //  ActionResult<ActionResult<JObject>> ListAsync();
+        //  JObject ListAsync();
 
-        //  ActionResult<ActionResult<JObject>> GetContractState();
+        //  JObject GetContractState();
 
-        //  ActionResult<ActionResult<JObject>> GetNep5Transfers();
+        //  JObject GetNep5Transfers();
 
-        //  ActionResult<ActionResult<JObject>> GetUnspents();
+        //  JObject GetUnspents();
 
     }
 }

@@ -67,7 +67,10 @@ namespace Neo.Network.Restful
                         Title = "Neo Rest API",
                         Version = "v1"
                     });
-                    option.IncludeXmlComments(System.String.Format(@"{0}\neo-cli\bin\Debug\netcoreapp2.1\neo-cli.xml", System.AppDomain.CurrentDomain.BaseDirectory)); ///
+
+                    // Set the comments path for the Swagger JSON and UI.
+                    var xmlPath = Path.Combine(AppContext.BaseDirectory, "Neo.xml");
+                    option.IncludeXmlComments(xmlPath);
                 });
 
                 services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

@@ -18,11 +18,8 @@
     <Company>The Neo Project</Company>
     <Description>Neo</Description>
     <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
-    <DocumentationFile>D:\Users\betty.bao\rpc-extension\neo\neo-cli\bin\Debug\netcoreapp2.1\neo-cli.xml</DocumentationFile>
-    <OutputPath>D:\Users\betty.bao\rpc-extension\neo\neo-cli\bin\Debug\netcoreapp2.1\</OutputPath>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
