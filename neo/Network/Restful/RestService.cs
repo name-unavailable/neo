@@ -39,7 +39,7 @@ namespace Neo.Network.Restful
 
         public new JObject GetVersion() => base.GetVersion();
 
-        public new JObject InvokeFunction(UInt160 script_hash, string operation, ContractParameter[] args) => InvokeFunction(script_hash, operation, args);
+        public new JObject InvokeFunction(UInt160 script_hash, string operation, ContractParameter[] args) => base.InvokeFunction(script_hash, operation, args);
 
         public JObject InvokeScript(byte[] script, UInt160[] scriptHashesForVerifying)
         {

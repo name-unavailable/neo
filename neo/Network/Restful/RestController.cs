@@ -284,16 +284,24 @@ namespace Neo.Network.Restful
         /// <summary>
         /// Invoke a smart contract with specified script hash, passing in an operation and the corresponding params	
         /// </summary>
-        /// <param name="param"></param>
+        /// <param name="requestParameters"></param>
         /// <returns></returns>
         [HttpPost("contracts/invokingfunction")]
         [ProducesResponseType(typeof(JObject), 200)]
-        public IActionResult InvokeFunction(dynamic param)
+        [ProducesResponseType(400)]
+        public IActionResult InvokeFunction(RequestParameters requestParameters)
         {
-            UInt160 script_hash = UInt160.Parse(Convert.ToString(param.scriptHash));
-            string operation = param.operation;
-            ContractParameter[] args = param.ContainsKey("args") ? ((JArray)param.args).Select(p => ContractParameter.FromJson(p)).ToArray() : new ContractParameter[0];
-            return Ok(_restService.InvokeFunction(script_hash, operation, args));
+            try
+            {
+                UInt160 script_hash = UInt160.Parse(requestParameters.ScriptHash);
+                string operation = requestParameters.Operation;
+                ContractParameter[] args = requestParameters.Params??new ContractParameter[0];
+                return Content(_restService.InvokeFunction(script_hash, operation, args).ToString(), "application/json");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -378,7 +386,7 @@ namespace Neo.Network.Restful
         [ProducesResponseType(typeof(JObject), 200)]
         public IActionResult ValidateAddress(string address)
         {
-            return Content(_restService.ValidateAddress(address).ToString(), "application/json")
+            return Content(_restService.ValidateAddress(address).ToString(), "application/json");
         }
     }
 }
