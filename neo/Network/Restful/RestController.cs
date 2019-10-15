@@ -46,7 +46,7 @@ namespace Neo.Network.Restful
         {
             try
             {
-                JObject _key = new JNumber(index); 
+                JObject _key = new JNumber(index);
                 bool isVerbose = verbose == 0 ? false : true;
                 return Content(_restService.GetBlock(_key, isVerbose).ToString(), "application/json");
             }
@@ -295,7 +295,7 @@ namespace Neo.Network.Restful
             {
                 UInt160 script_hash = UInt160.Parse(requestParameters.ScriptHash);
                 string operation = requestParameters.Operation;
-                ContractParameter[] args = requestParameters.Params??new ContractParameter[0];
+                ContractParameter[] args = requestParameters.Params?.Select(p => ContractParameter.FromJson(p.ToJson()))?.ToArray() ?? new ContractParameter[0];
                 return Content(_restService.InvokeFunction(script_hash, operation, args).ToString(), "application/json");
             }
             catch (Exception ex)

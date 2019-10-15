@@ -1,4 +1,4 @@
-using Neo.SmartContract;
+using Neo.Network.RPC.Models;
 
 namespace Neo.Network.Restful
 {
@@ -6,7 +6,6 @@ namespace Neo.Network.Restful
     {
         public string ScriptHash { get; set; }
         public string Operation { get; set; }
-        public ContractParameter[] Params { get; set; }
-
+        public RpcStack[] Params { get; set; }
     }
 }
