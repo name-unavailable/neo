@@ -282,20 +282,45 @@ namespace Neo.Network.Restful
         }
 
         /// <summary>
+        /// Get the current number of connections for the node
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="200">Connections Count</response>
+        [HttpGet("network/localnode/connections")]
+        [ProducesResponseType(typeof(double), 200)]
+        public IActionResult GetConnectionCount()
+        {
+            return Ok(_restService.GetConnectionCount());
+            
+        }
+
+        /// <summary>
+        /// Get the peers of the node
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="200">Peers Information</response>
+        [HttpGet("network/localnode/peers")]
+        [ProducesResponseType(typeof(JObject), 200)]
+        public IActionResult GetPeers()
+        {
+            return Content(_restService.GetPeers().ToString(), "application/json"); 
+        }
+
+        /// <summary>
         /// Invoke a smart contract with specified script hash, passing in an operation and the corresponding params	
         /// </summary>
-        /// <param name="requestParameters"></param>
+        /// <param name="param"></param>
         /// <returns></returns>
         [HttpPost("contracts/invokingfunction")]
         [ProducesResponseType(typeof(JObject), 200)]
         [ProducesResponseType(400)]
-        public IActionResult InvokeFunction(InvokeFunctionParameter requestParameters)
+        public IActionResult InvokeFunction(InvokeFunctionParameter param)
         {
             try
             {
-                UInt160 script_hash = UInt160.Parse(requestParameters.ScriptHash);
-                string operation = requestParameters.Operation;
-                ContractParameter[] args = requestParameters.Params?.Select(p => ContractParameter.FromJson(p.ToJson()))?.ToArray() ?? new ContractParameter[0];
+                UInt160 script_hash = UInt160.Parse(param.ScriptHash);
+                string operation = param.Operation;
+                ContractParameter[] args = param.Params?.Select(p => ContractParameter.FromJson(p.ToJson()))?.ToArray() ?? new ContractParameter[0];
                 return Content(_restService.InvokeFunction(script_hash, operation, args).ToString(), "application/json");
             }
             catch (Exception ex)
@@ -313,13 +338,20 @@ namespace Neo.Network.Restful
         [ProducesResponseType(typeof(JObject), 200)]
         public IActionResult InvokeScript(InvokeScriptParameter param)
         {
-            byte[] script = param.Script.HexToBytes();
-            UInt160[] scriptHashesForVerifying = null;
-            if (param.Hashes != null && param.Hashes.Length > 0)
+            try
             {
-                scriptHashesForVerifying = param.Hashes.Select(u => UInt160.Parse(u)).ToArray();
+                byte[] script = param.Script.HexToBytes();
+                UInt160[] scriptHashesForVerifying = null;
+                if (param.Hashes != null && param.Hashes.Length > 0)
+                {
+                    scriptHashesForVerifying = param.Hashes.Select(u => UInt160.Parse(u)).ToArray();
+                }
+                return Content(_restService.InvokeScript(script, scriptHashesForVerifying).ToString(), "application/json");
             }
-            return Content(_restService.InvokeScript(script, scriptHashesForVerifying).ToString(), "application/json");
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>

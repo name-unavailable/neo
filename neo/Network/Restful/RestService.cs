@@ -59,5 +59,9 @@ namespace Neo.Network.Restful
 
         public new JObject ValidateAddress(string address) => base.ValidateAddress(address);
 
+        public new double GetConnectionCount() => base.GetConnectionCount().AsNumber();
+
+        public new JObject GetPeers() => base.GetPeers();
+
     }
 }

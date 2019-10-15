@@ -44,6 +44,10 @@ namespace Neo.Network.Restful
 
         JObject ValidateAddress(string address);
 
+        double GetConnectionCount();
+
+        JObject GetPeers();
+
         //  JObject GetAccountState();
 
         //  JObject ListAddress();
