@@ -289,7 +289,7 @@ namespace Neo.Network.Restful
         [HttpPost("contracts/invokingfunction")]
         [ProducesResponseType(typeof(JObject), 200)]
         [ProducesResponseType(400)]
-        public IActionResult InvokeFunction(RequestParameters requestParameters)
+        public IActionResult InvokeFunction(InvokeFunctionParameter requestParameters)
         {
             try
             {
@@ -311,15 +311,15 @@ namespace Neo.Network.Restful
         /// <returns></returns>
         [HttpPost("contracts/invokingscript")]
         [ProducesResponseType(typeof(JObject), 200)]
-        public IActionResult InvokeScript(dynamic param)
+        public IActionResult InvokeScript(InvokeScriptParameter param)
         {
-            byte[] script = param.script.HexToBytes();
+            byte[] script = param.Script.HexToBytes();
             UInt160[] scriptHashesForVerifying = null;
-            if (param.ContainsKey("scriptHashes"))
+            if (param.Hashes != null && param.Hashes.Length > 0)
             {
-                scriptHashesForVerifying = ((JArray)param.scriptHashes).Select(u => UInt160.Parse(u.AsString())).ToArray();
+                scriptHashesForVerifying = param.Hashes.Select(u => UInt160.Parse(u)).ToArray();
             }
-            return Ok(_restService.InvokeScript(script, scriptHashesForVerifying));
+            return Content(_restService.InvokeScript(script, scriptHashesForVerifying).ToString(), "application/json");
         }
 
         /// <summary>
