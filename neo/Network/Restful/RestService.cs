@@ -8,12 +8,7 @@ namespace Neo.Network.Restful
 {
     public class RestService : QueryServer, IRestService
     {
-        public RestService(NeoSystem system, Wallet wallet = null, long maxGasInvoke = default)
-        {
-            this.NeoSystem = system;
-            this.Wallet = wallet;
-            this.MaxGasInvoke = maxGasInvoke;
-        }
+        public RestService(NeoSystem system, Wallet wallet = null, long maxGasInvoke = default) : base(system, wallet, maxGasInvoke) { }
 
         public new string GetBestBlockHash() => base.GetBestBlockHash().AsString();
 

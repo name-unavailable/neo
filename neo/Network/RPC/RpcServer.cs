@@ -34,13 +34,8 @@ namespace Neo.Network.RPC
     {
         private IWebHost host;
 
-        public RpcServer(NeoSystem system, Wallet wallet = null, long maxGasInvoke = default)
-        {
-            this.NeoSystem = system;
-            this.Wallet = wallet;
-            this.MaxGasInvoke = maxGasInvoke;
-        }
-
+        public RpcServer(NeoSystem system, Wallet wallet = null, long maxGasInvoke = default) : base(system, wallet, maxGasInvoke) { }
+       
         private static JObject CreateErrorResponse(JObject id, int code, string message, JObject data = null)
         {
             JObject response = CreateResponse(id);

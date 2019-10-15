@@ -4,6 +4,8 @@ using Neo.IO.Json;
 using Neo.Network.P2P.Payloads;
 using Neo.SmartContract;
 using System.Linq;
+using System;
+using Neo.Network.RPC;
 
 namespace Neo.Network.Restful
 {
@@ -25,29 +27,57 @@ namespace Neo.Network.Restful
         /// <response code="200">block hash</response>
         [HttpGet("blocks/bestblockhash")]
         [ProducesResponseType(typeof(string), 200)]
-        public string GetBestBlockHash()
+        public IActionResult GetBestBlockHash()
         {
-            return _restService.GetBestBlockHash();
+            return Ok(_restService.GetBestBlockHash());
         }
 
         /// <summary>
-        /// Get a block at a certain height or with the specified hash
+        /// Get a block at a certain height
         /// </summary>
-        /// <param name="indexorhash">block height or block hash</param>
+        /// <param name="index">block height</param>
         /// <param name="verbose">0:get block serialized in hexstring; 1: get block in Json format</param>
         /// <returns></returns>
         /// <response code="200">block information</response>
-        /// <response code="400">Unknown Block</response>
-        /// <response code="500">Format Invalid</response>
-        [HttpGet("blocks/{indexorhash}/{verbose}")]
+        [HttpGet("blocks/getblockbyindex")]
         [ProducesResponseType(typeof(JObject), 200)]
         [ProducesResponseType(400)]
-        [ProducesResponseType(500)]
-        public ActionResult GetBlock(string indexorhash, int verbose)
+        public IActionResult GetBlockByIndex(int index, int verbose)
         {
-            JObject _key = JObject.Parse(indexorhash);
-            bool isVerbose = verbose == 0 ? false : true;
-            return Content(_restService.GetBlock(_key, isVerbose).ToString(), "application/json");
+            try
+            {
+                JObject _key = new JNumber(index); 
+                bool isVerbose = verbose == 0 ? false : true;
+                return Content(_restService.GetBlock(_key, isVerbose).ToString(), "application/json");
+            }
+            catch (RpcException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Get a block with the specified hash
+        /// </summary>
+        /// <param name="hash">block hash</param>
+        /// <param name="verbose">0:get block serialized in hexstring; 1: get block in Json format</param>
+        /// <returns></returns>
+        /// <response code="200">block information</response>
+        [HttpGet("blocks/getblockbyhash")]
+        [ProducesResponseType(typeof(JObject), 200)]
+        [ProducesResponseType(400)]
+        public IActionResult GetBlockByHash(string hash, int verbose)
+        {
+            try
+            {
+                JObject _key = new JString(hash);
+                bool isVerbose = verbose == 0 ? false : true;
+                return Content(_restService.GetBlock(_key, isVerbose).ToString(), "application/json");
+            }
+            catch (RpcException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -57,9 +87,9 @@ namespace Neo.Network.Restful
         /// <response code="200">block count</response>
         [HttpGet("blocks/count")]
         [ProducesResponseType(typeof(double), 200)]
-        public double GetBlockCount()
+        public IActionResult GetBlockCount()
         {
-            return _restService.GetBlockCount();
+            return Ok(_restService.GetBlockCount());
         }
 
         /// <summary>
@@ -68,15 +98,20 @@ namespace Neo.Network.Restful
         /// <param name="index">block height</param>
         /// <returns></returns>
         /// <response code="200">Block Hash</response>
-        /// <response code="400">Invalid Height</response>
         [HttpGet("blocks/{index}/hash")]
         [ProducesResponseType(typeof(string), 200)]
         [ProducesResponseType(400)]
-        public string GetBlockHash(uint index)
+        public IActionResult GetBlockHash(uint index)
         {
-            return _restService.GetBlockHash(index);
+            try
+            {
+                return Ok(_restService.GetBlockHash(index));
+            }
+            catch (RpcException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
-
 
         /// <summary>
         /// Get the block header with the specified hash
@@ -85,15 +120,20 @@ namespace Neo.Network.Restful
         /// <param name="verbose">0:get block serialized in hexstring; 1: get block in Json format</param>
         /// <returns></returns>
         /// <response code="200">block header</response>
-        /// <response code="400">Unknown Block</response>
         [HttpGet("blocks/{index}/header/{verbose}")]
         [ProducesResponseType(typeof(JObject), 200)]
         [ProducesResponseType(400)]
-        public JObject GetBlockHeader(uint index, int verbose = 0)
+        public IActionResult GetBlockHeader(uint index, int verbose = 0)
         {
-
-            bool isVerbose = verbose == 0 ? false : true;
-            return _restService.GetBlockHeader(index, isVerbose);
+            try
+            {
+                bool isVerbose = verbose == 0 ? false : true;
+                return Content(_restService.GetBlockHeader(index, isVerbose).ToString(), "application/json");
+            }
+            catch (RpcException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -106,11 +146,17 @@ namespace Neo.Network.Restful
         [HttpGet("blocks/{index}/sysfee")]
         [ProducesResponseType(typeof(string), 200)]
         [ProducesResponseType(400)]
-        public string GetBlockSysFee(uint index)
+        public IActionResult GetBlockSysFee(uint index)
         {
-            return _restService.GetBlockSysFee(index);
+            try
+            {
+                return Ok(_restService.GetBlockSysFee(index));
+            }
+            catch (RpcException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
-
 
         /// <summary>
         /// Get a contract with the specified script hash
@@ -122,10 +168,17 @@ namespace Neo.Network.Restful
         [HttpGet("contracts/{scriptHash}")]
         [ProducesResponseType(typeof(JObject), 200)]
         [ProducesResponseType(400)]
-        public JObject GetContractState(string scriptHash)
+        public IActionResult GetContractState(string scriptHash)
         {
-            UInt160 script_hash = UInt160.Parse(scriptHash);
-            return _restService.GetContractState(script_hash);
+            try
+            {
+                UInt160 script_hash = UInt160.Parse(scriptHash);
+                return Content(_restService.GetContractState(script_hash).ToString(), "application/json");
+            }
+            catch (RpcException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -136,10 +189,10 @@ namespace Neo.Network.Restful
         /// <response code="200">Transactions in Memory Pool</response>
         [HttpGet("network/localnode/rawmempool/{getUnverified}")]
         [ProducesResponseType(typeof(JObject), 200)]
-        public JObject GetRawMemPool(int getUnverified = 0)
+        public IActionResult GetRawMemPool(int getUnverified = 0)
         {
             bool shouldGetUnverified = getUnverified == 0 ? false : true;
-            return _restService.GetRawMemPool(shouldGetUnverified);
+            return Content(_restService.GetRawMemPool(shouldGetUnverified).ToString(), "application/json");
         }
 
         /// <summary>
@@ -149,15 +202,21 @@ namespace Neo.Network.Restful
         /// <param name="verbose">0:get block serialized in hexstring; 1: get block in Json format</param>
         /// <returns></returns>
         /// <response code="200">Transaction Information</response>
-        /// <response code="400">Unknown Transaction</response>
         [HttpGet("transactions/{txid}/{verbose}")]
         [ProducesResponseType(typeof(JObject), 200)]
         [ProducesResponseType(400)]
-        public JObject GetRawTransaction(string txid, int verbose = 0)
+        public IActionResult GetRawTransaction(string txid, int verbose = 0)
         {
-            UInt256 hash = UInt256.Parse(txid);
-            bool isVerbose = verbose == 0 ? false : true;
-            return _restService.GetRawTransaction(hash, isVerbose);
+            try
+            {
+                UInt256 hash = UInt256.Parse(txid);
+                bool isVerbose = verbose == 0 ? false : true;
+                return Content(_restService.GetRawTransaction(hash, isVerbose).ToString(), "application/json");
+            }
+            catch (RpcException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -169,10 +228,10 @@ namespace Neo.Network.Restful
         /// <response code="200">Stored Value</response>
         [HttpGet("contracts/{scriptHash}/storage/{key}/value")]
         [ProducesResponseType(typeof(JObject), 200)]
-        public JObject GetStorage(string scriptHash, string key)
+        public IActionResult GetStorage(string scriptHash, string key)
         {
             UInt160 script_hash = UInt160.Parse(scriptHash);
-            return _restService.GetStorage(script_hash, key.HexToBytes());
+            return Content(_restService.GetStorage(script_hash, key.HexToBytes()).ToString(), "application/json");
         }
 
         /// <summary>
@@ -185,10 +244,17 @@ namespace Neo.Network.Restful
         [HttpGet("transactions/{txid}/height")]
         [ProducesResponseType(typeof(double), 200)]
         [ProducesResponseType(400)]
-        public double GetTransactionHeight(string txid)
+        public IActionResult GetTransactionHeight(string txid)
         {
-            UInt256 hash = UInt256.Parse(txid);
-            return _restService.GetTransactionHeight(hash);
+            try
+            {
+                UInt256 hash = UInt256.Parse(txid);
+                return Ok(_restService.GetTransactionHeight(hash));
+            }
+            catch (RpcException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -198,9 +264,9 @@ namespace Neo.Network.Restful
         /// <response code="200">Latest Validators</response>
         [HttpGet("validators/latest")]
         [ProducesResponseType(typeof(double), 200)]
-        public JObject GetValidators()
+        public IActionResult GetValidators()
         {
-            return _restService.GetValidators();
+            return Content(_restService.GetValidators().ToString(), "application/json");
         }
 
         /// <summary>
@@ -210,9 +276,9 @@ namespace Neo.Network.Restful
         /// <response code="200">Node Version</response>
         [HttpGet("network/localnode/version")]
         [ProducesResponseType(typeof(JObject), 200)]
-        public JObject GetVersion()
+        public IActionResult GetVersion()
         {
-            return _restService.GetVersion();
+            return Content(_restService.GetVersion().ToString(), "application/json");
         }
 
         /// <summary>
@@ -221,12 +287,13 @@ namespace Neo.Network.Restful
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpPost("contracts/invokingfunction")]
-        public JObject InvokeFunction(dynamic param)
+        [ProducesResponseType(typeof(JObject), 200)]
+        public IActionResult InvokeFunction(dynamic param)
         {
-            UInt160 script_hash = UInt160.Parse(param.scriptHash);
+            UInt160 script_hash = UInt160.Parse(Convert.ToString(param.scriptHash));
             string operation = param.operation;
             ContractParameter[] args = param.ContainsKey("args") ? ((JArray)param.args).Select(p => ContractParameter.FromJson(p)).ToArray() : new ContractParameter[0];
-            return _restService.InvokeFunction(script_hash, operation, args);
+            return Ok(_restService.InvokeFunction(script_hash, operation, args));
         }
 
         /// <summary>
@@ -235,7 +302,8 @@ namespace Neo.Network.Restful
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpPost("contracts/invokingscript")]
-        public JObject InvokeScript(dynamic param)
+        [ProducesResponseType(typeof(JObject), 200)]
+        public IActionResult InvokeScript(dynamic param)
         {
             byte[] script = param.script.HexToBytes();
             UInt160[] scriptHashesForVerifying = null;
@@ -243,7 +311,7 @@ namespace Neo.Network.Restful
             {
                 scriptHashesForVerifying = ((JArray)param.scriptHashes).Select(u => UInt160.Parse(u.AsString())).ToArray();
             }
-            return _restService.InvokeScript(script, scriptHashesForVerifying);
+            return Ok(_restService.InvokeScript(script, scriptHashesForVerifying));
         }
 
         /// <summary>
@@ -253,9 +321,9 @@ namespace Neo.Network.Restful
         /// <response code="200">Plugins Loaded</response>
         [HttpGet("network/localnode/plugins")]
         [ProducesResponseType(typeof(JObject), 200)]
-        public JObject ListPlugins()
+        public IActionResult ListPlugins()
         {
-            return _restService.ListPlugins();
+            return Content(_restService.ListPlugins().ToString(), "application/json");
         }
 
         /// <summary>
@@ -264,10 +332,19 @@ namespace Neo.Network.Restful
         /// <param name="hex">hexstring of the transaction</param>
         /// <returns></returns>
         [HttpGet("transactions/broadcasting/{hex}")]
-        public JObject SendRawTransaction(string hex)
+        [ProducesResponseType(typeof(JObject), 200)]
+        [ProducesResponseType(400)]
+        public IActionResult SendRawTransaction(string hex)
         {
-            Transaction tx = hex.HexToBytes().AsSerializable<Transaction>();
-            return _restService.SendRawTransaction(tx);
+            try
+            {
+                Transaction tx = hex.HexToBytes().AsSerializable<Transaction>();
+                return Ok(_restService.SendRawTransaction(tx));
+            }
+            catch (RpcException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -276,10 +353,19 @@ namespace Neo.Network.Restful
         /// <param name="hex">hexstring of the block</param>
         /// <returns></returns>
         [HttpGet("validators/submitblock/{hex}")]
-        public JObject SubmitBlock(string hex)
+        [ProducesResponseType(typeof(JObject), 200)]
+        [ProducesResponseType(400)]
+        public IActionResult SubmitBlock(string hex)
         {
-            Block block = hex.HexToBytes().AsSerializable<Block>();
-            return _restService.SubmitBlock(block);
+            try
+            {
+                Block block = hex.HexToBytes().AsSerializable<Block>();
+                return Ok(_restService.SubmitBlock(block));
+            }
+            catch (RpcException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -290,9 +376,9 @@ namespace Neo.Network.Restful
         /// <response code="200">Verification Result</response>
         [HttpGet("wallets/verifyingaddress/{address}")]
         [ProducesResponseType(typeof(JObject), 200)]
-        public JObject ValidateAddress(string address)
+        public IActionResult ValidateAddress(string address)
         {
-            return _restService.ValidateAddress(address);
+            return Content(_restService.ValidateAddress(address).ToString(), "application/json")
         }
     }
 }

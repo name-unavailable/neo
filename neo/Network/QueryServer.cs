@@ -24,6 +24,13 @@ namespace Neo.Network
         public long MaxGasInvoke { get; protected set; }
         public NeoSystem NeoSystem { get; protected set; }
 
+        public QueryServer(NeoSystem system, Wallet wallet = null, long maxGasInvoke = default)
+        {
+            NeoSystem = system;
+            Wallet = wallet;
+            MaxGasInvoke = maxGasInvoke;
+        }
+
         protected JObject GetBestBlockHash()
         {
             return Blockchain.Singleton.CurrentBlockHash.ToString();
@@ -35,7 +42,14 @@ namespace Neo.Network
             if (key is JNumber)
             {
                 uint index = uint.Parse(key.AsString());
-                block = Blockchain.Singleton.Store.GetBlock(index);
+                if (index <= Blockchain.Singleton.Height)
+                {
+                    block = Blockchain.Singleton.Store.GetBlock(index);
+                }
+                else
+                {
+                    throw new RpcException(-100, "Invalid Height");
+                }
             }
             else
             {
