@@ -13,7 +13,7 @@ namespace Neo.Network.GraphQL
             Field(x => x.Size, type: typeof(IntGraphType));
             Field(x => x.Header, type: typeof(BlockHeaderType));
             Field(x => x.ConsensusData.Nonce, type: typeof(UInt64GraphType));
-            Field(x => x.Transactions, type: typeof(TransactionsType));
+            Field(x => x.Transactions, type: typeof(ListGraphType<TransactionsType>));
         }
     } 
 }

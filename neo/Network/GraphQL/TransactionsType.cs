@@ -15,9 +15,9 @@ namespace Neo.Network.GraphQL
             Field(x => x.NetworkFee, type: typeof(LongGraphType));
             Field(x => x.ValidUntilBlock, type: typeof(UIntGraphType));
             Field(x => x.Attributes, type: typeof(ListGraphType<TransactionAttributeType>));
-            Field(x => x.Cosigners, type: typeof(CosignersType));
+            Field(x => x.Cosigners, type: typeof(ListGraphType<CosignersType>));
             Field(x => x.Script, type: typeof(ListGraphType<ByteGraphType>));
-            Field(x => x.Witnesses,type: typeof(WitnessesType));
+            Field(x => x.Witnesses,type: typeof(ListGraphType<WitnessesType>));
         }
     }
 

@@ -30,7 +30,7 @@ namespace Neo.Network.GraphQL
 
         public override object ParseLiteral(IValue value)  // inline value
         {
-            return UInt32.Parse(Convert.ToString(value));
+            return UInt32.Parse(Convert.ToString(value.Value));
         }
 
         public override object ParseValue(object value)  // Json format value
