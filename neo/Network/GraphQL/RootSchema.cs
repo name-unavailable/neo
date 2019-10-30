@@ -3,9 +3,9 @@ using GraphQL.Types;
 
 namespace Neo.Network.GraphQL
 {
-    public class GraphSchema : Schema
+    public class RootSchema : Schema
     {
-        public GraphSchema(IDependencyResolver resolver) :
+        public RootSchema(IDependencyResolver resolver) :
            base(resolver)
         {
             Query = resolver.Resolve<RootQuery>();

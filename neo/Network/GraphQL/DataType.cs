@@ -11,12 +11,12 @@ namespace Neo.Network.GraphQL
 
         public override object ParseLiteral(IValue value)  // inline value
         {
-            return UInt256.Parse(Convert.ToString(value));
+            return UInt256.Parse(Convert.ToString(value.Value));
         }
 
         public override object ParseValue(object value)  // Json format value
         {
-            return UInt256.Parse(Convert.ToString(value));
+            return UInt256.Parse(value.ToString());
         }
 
         public override object Serialize(object value)
@@ -50,7 +50,7 @@ namespace Neo.Network.GraphQL
 
         public override object ParseLiteral(IValue value)  // inline value
         {
-            return UInt64.Parse(Convert.ToString(value));
+            return UInt64.Parse(Convert.ToString(value.Value));
         }
 
         public override object ParseValue(object value)  // Json format value
@@ -70,7 +70,7 @@ namespace Neo.Network.GraphQL
 
         public override object ParseLiteral(IValue value)  // inline value
         {
-            return UInt160.Parse(Convert.ToString(value));
+            return UInt160.Parse(Convert.ToString(value.Value));
         }
 
         public override object ParseValue(object value)  // Json format value
@@ -90,7 +90,7 @@ namespace Neo.Network.GraphQL
 
         public override object ParseLiteral(IValue value)  // inline value
         {
-            return Int64.Parse(Convert.ToString(value));
+            return Int64.Parse(Convert.ToString(value.Value));
         }
 
         public override object ParseValue(object value)  // Json format value
@@ -110,7 +110,7 @@ namespace Neo.Network.GraphQL
 
         public override object ParseLiteral(IValue value)  // inline value
         {
-            return Byte.Parse(Convert.ToString(value));
+            return Byte.Parse(Convert.ToString(value.Value));
         }
 
         public override object ParseValue(object value)  // Json format value
@@ -130,7 +130,7 @@ namespace Neo.Network.GraphQL
 
         public override object ParseLiteral(IValue value)  // inline value
         {
-            return ECPoint.Parse(Convert.ToString(value), ECCurve.Secp256r1);
+            return ECPoint.Parse(Convert.ToString(value.Value), ECCurve.Secp256r1);
         }
 
         public override object ParseValue(object value)  // Json format value

@@ -14,7 +14,6 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using Neo.Network.Restful;
 
-
 namespace Neo.Network.GraphQL
 {
     public class GraphQLServer : IDisposable
@@ -65,14 +64,14 @@ namespace Neo.Network.GraphQL
                 services.AddScoped<IDependencyResolver>
                            (s => new FuncDependencyResolver(s.GetRequiredService));
                 services.AddScoped<IRestService, RestService>(s => new RestService(system, Wallet, MaxGasInvoke));
-                services.AddScoped<GraphSchema>();
+                services.AddScoped<RootSchema>();
                 services.AddGraphQL().AddGraphTypes(ServiceLifetime.Scoped);
 
                 services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             })
             .Configure(app =>
             {
-                app.UseGraphQL<GraphSchema>();
+                app.UseGraphQL<RootSchema>();
                 app.UseGraphQLPlayground
                    (new GraphQLPlaygroundOptions());
                 app.UseMvc();
