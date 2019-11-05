@@ -1,6 +1,5 @@
 using GraphQL.Types;
 using Neo.Network.P2P.Payloads;
-using Neo.Wallets;
 
 namespace Neo.Network.GraphQL
 {

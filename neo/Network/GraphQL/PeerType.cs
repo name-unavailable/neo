@@ -1,6 +1,4 @@
 using GraphQL.Types;
-using Neo.Network.P2P;
-using System.Net;
 using Neo.Network.RPC.Models;
 
 namespace Neo.Network.GraphQL
