@@ -142,24 +142,35 @@ namespace Neo.Network.GraphQL
                 return RpcInvokeResult.FromJson(restService.InvokeFunction(script_hash, operation, args));
             });
 
-            Field<InvokeResultType>("txbroadcasting", //
+            Field<BooleanGraphType>("txbroadcasting", //
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "hex" }
             ), resolve: context =>
             {
                 var hex = context.GetArgument<string>("hex");
                 Transaction tx = hex.HexToBytes().AsSerializable<Transaction>();
-                return restService.SendRawTransaction(tx);
+                return restService.SendRawTransaction(tx).AsBoolean();
             });
 
-                Field<InvokeResultType>("blockrelaying", //
+            Field<BooleanGraphType>("blockrelaying", //
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "hex" }
             ), resolve: context =>
             {
                 var hex = context.GetArgument<string>("hex");
                 Block block = hex.HexToBytes().AsSerializable<Block>();
-                return restService.SubmitBlock(block);
+                return restService.SubmitBlock(block).AsBoolean();
+            });
+
+            Field<StringGraphType>("getstorage", //
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "scriptHash" },
+                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "key" }
+            ), resolve: context =>
+            {
+                var scriptHash = UInt160.Parse(context.GetArgument<string>("scriptHash"));
+                var key = context.GetArgument<string>("scriptHash").HexToBytes();
+                return restService.GetStorage(scriptHash, key)?.AsString();
             });
         }
     }
