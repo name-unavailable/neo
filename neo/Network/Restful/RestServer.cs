@@ -75,7 +75,7 @@ namespace Neo.Network.Restful
 
                 services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-                services.AddScoped<IRestService, RestService>(s => new RestService(system, Wallet, MaxGasInvoke));
+                services.AddScoped<IQueryService, QueryService>(s => new QueryService(system, Wallet, MaxGasInvoke));
             })
             .Configure(app =>
             {

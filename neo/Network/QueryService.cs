@@ -6,9 +6,9 @@ using Neo.Wallets;
 
 namespace Neo.Network.Restful
 {
-    public class RestService : QueryServer, IRestService
+    public class QueryService : QueryServer, IQueryService
     {
-        public RestService(NeoSystem system, Wallet wallet = null, long maxGasInvoke = default) : base(system, wallet, maxGasInvoke) { }
+        public QueryService(NeoSystem system, Wallet wallet = null, long maxGasInvoke = default) : base(system, wallet, maxGasInvoke) { }
 
         public new string GetBestBlockHash() => base.GetBestBlockHash().AsString();
 

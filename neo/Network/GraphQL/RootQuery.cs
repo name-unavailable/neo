@@ -13,10 +13,10 @@ namespace Neo.Network.GraphQL
 {
     public class RootQuery : ObjectGraphType
     {
-        public RootQuery(IRestService restService)
+        public RootQuery(IQueryService queryService)
         {
             Field<StringGraphType>("bestblockhash", resolve:
-            context => restService.GetBestBlockHash());
+            context => queryService.GetBestBlockHash());
 
             Field<BlockType>("block",
                 arguments: new QueryArguments(
@@ -28,18 +28,18 @@ namespace Neo.Network.GraphQL
                 bool verbose = true;
                 if (index != null)
                 {
-                    return RpcBlock.FromJson(restService.GetBlock(index, verbose));
+                    return RpcBlock.FromJson(queryService.GetBlock(index, verbose));
                 }
                 else
                 {
                     JObject hash = new JString(context.GetArgument<string>("hash"));
-                    return Block.FromJson(restService.GetBlock(hash, verbose));
+                    return Block.FromJson(queryService.GetBlock(hash, verbose));
                 }
             });
 
             Field<IntGraphType>("blockcount", resolve: context =>
             {
-                return restService.GetBlockCount();
+                return queryService.GetBlockCount();
             });
 
             Field<StringGraphType>("blocksysfee",
@@ -48,7 +48,7 @@ namespace Neo.Network.GraphQL
                 ), resolve: context =>
             {
                 var index = context.GetArgument<uint>("index");
-                return restService.GetBlockSysFee(index);
+                return queryService.GetBlockSysFee(index);
             });
 
             Field<TransactionsType>("transaction",
@@ -58,7 +58,7 @@ namespace Neo.Network.GraphQL
             {
                 var txid = UInt256.Parse(context.GetArgument<string>("txid"));
                 bool verbose = true;
-                return RpcTransaction.FromJson(restService.GetRawTransaction(txid, verbose));
+                return RpcTransaction.FromJson(queryService.GetRawTransaction(txid, verbose));
             });
 
             Field<UIntGraphType>("transactionheight",
@@ -67,7 +67,7 @@ namespace Neo.Network.GraphQL
               ), resolve: context =>
             {
                 var txid = UInt256.Parse(context.GetArgument<string>("txid"));
-                return restService.GetTransactionHeight(txid);
+                return queryService.GetTransactionHeight(txid);
             });
 
             Field<ContractsType>("contract",
@@ -76,32 +76,32 @@ namespace Neo.Network.GraphQL
             ), resolve: context =>
             {
                 var script_hash = UInt160.Parse(context.GetArgument<string>("scripthash"));
-                return ContractState.FromJson(restService.GetContractState(script_hash));
+                return ContractState.FromJson(queryService.GetContractState(script_hash));
             });
 
             Field<ListGraphType<ValidatorsType>>("validators", resolve: context =>
             {
-                return ((JArray)restService.GetValidators()).Select(p => RpcValidator.FromJson(p)).ToArray();
+                return ((JArray)queryService.GetValidators()).Select(p => RpcValidator.FromJson(p)).ToArray();
             });
 
             Field<PeersType>("peers", resolve: context =>
             {
-                return RpcPeers.FromJson(restService.GetPeers());
+                return RpcPeers.FromJson(queryService.GetPeers());
             });
 
             Field<VertionType>("version", resolve: context =>
             {
-                return restService.GetVersion();
+                return queryService.GetVersion();
             });
 
             Field<IntGraphType>("connecttioncount", resolve: context =>
             {
-                return restService.GetConnectionCount();
+                return queryService.GetConnectionCount();
             });
 
             Field<ListGraphType<PluginsType>>("plugins", resolve: context =>
             {
-                return ((JArray)restService.ListPlugins()).Select(p => RpcPlugin.FromJson(p)).ToArray();
+                return ((JArray)queryService.ListPlugins()).Select(p => RpcPlugin.FromJson(p)).ToArray();
             });
 
             Field<BooleanGraphType>("addressverification",
@@ -110,7 +110,7 @@ namespace Neo.Network.GraphQL
            ), resolve: context =>
            {
                var address = context.GetArgument<string>("address");
-               return restService.ValidateAddress(address)["isvalid"].AsBoolean();
+               return queryService.ValidateAddress(address)["isvalid"].AsBoolean();
            });
 
             Field<InvokeResultType>("scriptinvocation", //
@@ -126,7 +126,7 @@ namespace Neo.Network.GraphQL
                 {
                     scriptHashesForVerifying = hashes.Select(u => UInt160.Parse(u)).ToArray();
                 }
-                return RpcInvokeResult.FromJson(restService.InvokeScript(script, scriptHashesForVerifying));
+                return RpcInvokeResult.FromJson(queryService.InvokeScript(script, scriptHashesForVerifying));
             });
 
             Field<InvokeResultType>("functioninvocation", //
@@ -139,7 +139,7 @@ namespace Neo.Network.GraphQL
                 UInt160 script_hash = UInt160.Parse(context.GetArgument<string>("scriptHash"));
                 string operation = context.GetArgument<string>("operation");
                 ContractParameter[] args = context.GetArgument<List<RpcStack>>("params")?.Select(p => ContractParameter.FromJson(p.ToJson()))?.ToArray() ?? new ContractParameter[0];
-                return RpcInvokeResult.FromJson(restService.InvokeFunction(script_hash, operation, args));
+                return RpcInvokeResult.FromJson(queryService.InvokeFunction(script_hash, operation, args));
             });
 
             Field<BooleanGraphType>("txbroadcasting", //
@@ -149,7 +149,7 @@ namespace Neo.Network.GraphQL
             {
                 var hex = context.GetArgument<string>("hex");
                 Transaction tx = hex.HexToBytes().AsSerializable<Transaction>();
-                return restService.SendRawTransaction(tx).AsBoolean();
+                return queryService.SendRawTransaction(tx).AsBoolean();
             });
 
             Field<BooleanGraphType>("blockrelaying", //
@@ -159,7 +159,7 @@ namespace Neo.Network.GraphQL
             {
                 var hex = context.GetArgument<string>("hex");
                 Block block = hex.HexToBytes().AsSerializable<Block>();
-                return restService.SubmitBlock(block).AsBoolean();
+                return queryService.SubmitBlock(block).AsBoolean();
             });
 
             Field<StringGraphType>("getstorage", //
@@ -170,7 +170,7 @@ namespace Neo.Network.GraphQL
             {
                 var scriptHash = UInt160.Parse(context.GetArgument<string>("scriptHash"));
                 var key = context.GetArgument<string>("scriptHash").HexToBytes();
-                return restService.GetStorage(scriptHash, key)?.AsString();
+                return queryService.GetStorage(scriptHash, key)?.AsString();
             });
         }
     }

@@ -14,10 +14,10 @@ namespace Neo.Network.Restful
     [ApiController]
     public class RestController : Controller
     {
-        private readonly IRestService _restService;
-        public RestController(IRestService restService)
+        private readonly IQueryService _queryService;
+        public RestController(IQueryService queryService)
         {
-            _restService = restService;
+            _queryService = queryService;
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Neo.Network.Restful
         [ProducesResponseType(typeof(string), 200)]
         public IActionResult GetBestBlockHash()
         {
-            return Ok(_restService.GetBestBlockHash());
+            return Ok(_queryService.GetBestBlockHash());
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace Neo.Network.Restful
             {
                 JObject _key = new JNumber(index);
                 bool isVerbose = verbose == 0 ? false : true;
-                return Content(_restService.GetBlock(_key, isVerbose).ToString(), "application/json");
+                return Content(_queryService.GetBlock(_key, isVerbose).ToString(), "application/json");
             }
             catch (RpcException ex)
             {
@@ -72,7 +72,7 @@ namespace Neo.Network.Restful
             {
                 JObject _key = new JString(hash);
                 bool isVerbose = verbose == 0 ? false : true;
-                return Content(_restService.GetBlock(_key, isVerbose).ToString(), "application/json");
+                return Content(_queryService.GetBlock(_key, isVerbose).ToString(), "application/json");
             }
             catch (RpcException ex)
             {
@@ -89,7 +89,7 @@ namespace Neo.Network.Restful
         [ProducesResponseType(typeof(double), 200)]
         public IActionResult GetBlockCount()
         {
-            return Ok(_restService.GetBlockCount());
+            return Ok(_queryService.GetBlockCount());
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Neo.Network.Restful
         {
             try
             {
-                return Ok(_restService.GetBlockHash(index));
+                return Ok(_queryService.GetBlockHash(index));
             }
             catch (RpcException ex)
             {
@@ -128,7 +128,7 @@ namespace Neo.Network.Restful
             try
             {
                 bool isVerbose = verbose == 0 ? false : true;
-                return Content(_restService.GetBlockHeader(index, isVerbose).ToString(), "application/json");
+                return Content(_queryService.GetBlockHeader(index, isVerbose).ToString(), "application/json");
             }
             catch (RpcException ex)
             {
@@ -150,7 +150,7 @@ namespace Neo.Network.Restful
         {
             try
             {
-                return Ok(_restService.GetBlockSysFee(index));
+                return Ok(_queryService.GetBlockSysFee(index));
             }
             catch (RpcException ex)
             {
@@ -173,7 +173,7 @@ namespace Neo.Network.Restful
             try
             {
                 UInt160 script_hash = UInt160.Parse(scriptHash);
-                return Content(_restService.GetContractState(script_hash).ToString(), "application/json");
+                return Content(_queryService.GetContractState(script_hash).ToString(), "application/json");
             }
             catch (RpcException ex)
             {
@@ -192,7 +192,7 @@ namespace Neo.Network.Restful
         public IActionResult GetRawMemPool(int getUnverified = 0)
         {
             bool shouldGetUnverified = getUnverified == 0 ? false : true;
-            return Content(_restService.GetRawMemPool(shouldGetUnverified).ToString(), "application/json");
+            return Content(_queryService.GetRawMemPool(shouldGetUnverified).ToString(), "application/json");
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace Neo.Network.Restful
             {
                 UInt256 hash = UInt256.Parse(txid);
                 bool isVerbose = verbose == 0 ? false : true;
-                return Content(_restService.GetRawTransaction(hash, isVerbose).ToString(), "application/json");
+                return Content(_queryService.GetRawTransaction(hash, isVerbose).ToString(), "application/json");
             }
             catch (RpcException ex)
             {
@@ -231,7 +231,7 @@ namespace Neo.Network.Restful
         public IActionResult GetStorage(string scriptHash, string key)
         {
             UInt160 script_hash = UInt160.Parse(scriptHash);
-            return Content(_restService.GetStorage(script_hash, key.HexToBytes()).ToString(), "application/json");
+            return Content(_queryService.GetStorage(script_hash, key.HexToBytes()).ToString(), "application/json");
         }
 
         /// <summary>
@@ -249,7 +249,7 @@ namespace Neo.Network.Restful
             try
             {
                 UInt256 hash = UInt256.Parse(txid);
-                return Ok(_restService.GetTransactionHeight(hash));
+                return Ok(_queryService.GetTransactionHeight(hash));
             }
             catch (RpcException ex)
             {
@@ -266,7 +266,7 @@ namespace Neo.Network.Restful
         [ProducesResponseType(typeof(double), 200)]
         public IActionResult GetValidators()
         {
-            return Content(_restService.GetValidators().ToString(), "application/json");
+            return Content(_queryService.GetValidators().ToString(), "application/json");
         }
 
         /// <summary>
@@ -278,7 +278,7 @@ namespace Neo.Network.Restful
         [ProducesResponseType(typeof(JObject), 200)]
         public IActionResult GetVersion()
         {
-            return Content(_restService.GetVersion().ToString(), "application/json");
+            return Content(_queryService.GetVersion().ToString(), "application/json");
         }
 
         /// <summary>
@@ -290,7 +290,7 @@ namespace Neo.Network.Restful
         [ProducesResponseType(typeof(double), 200)]
         public IActionResult GetConnectionCount()
         {
-            return Ok(_restService.GetConnectionCount());
+            return Ok(_queryService.GetConnectionCount());
             
         }
 
@@ -303,7 +303,7 @@ namespace Neo.Network.Restful
         [ProducesResponseType(typeof(JObject), 200)]
         public IActionResult GetPeers()
         {
-            return Content(_restService.GetPeers().ToString(), "application/json"); 
+            return Content(_queryService.GetPeers().ToString(), "application/json"); 
         }
 
         /// <summary>
@@ -321,7 +321,7 @@ namespace Neo.Network.Restful
                 UInt160 script_hash = UInt160.Parse(param.ScriptHash);
                 string operation = param.Operation;
                 ContractParameter[] args = param.Params?.Select(p => ContractParameter.FromJson(p.ToJson()))?.ToArray() ?? new ContractParameter[0];
-                return Content(_restService.InvokeFunction(script_hash, operation, args).ToString(), "application/json");
+                return Content(_queryService.InvokeFunction(script_hash, operation, args).ToString(), "application/json");
             }
             catch (Exception ex)
             {
@@ -346,7 +346,7 @@ namespace Neo.Network.Restful
                 {
                     scriptHashesForVerifying = param.Hashes.Select(u => UInt160.Parse(u)).ToArray();
                 }
-                return Content(_restService.InvokeScript(script, scriptHashesForVerifying).ToString(), "application/json");
+                return Content(_queryService.InvokeScript(script, scriptHashesForVerifying).ToString(), "application/json");
             }
             catch (Exception ex)
             {
@@ -363,7 +363,7 @@ namespace Neo.Network.Restful
         [ProducesResponseType(typeof(JObject), 200)]
         public IActionResult ListPlugins()
         {
-            return Content(_restService.ListPlugins().ToString(), "application/json");
+            return Content(_queryService.ListPlugins().ToString(), "application/json");
         }
 
         /// <summary>
@@ -379,7 +379,7 @@ namespace Neo.Network.Restful
             try
             {
                 Transaction tx = hex.HexToBytes().AsSerializable<Transaction>();
-                return Ok(_restService.SendRawTransaction(tx));
+                return Ok(_queryService.SendRawTransaction(tx));
             }
             catch (RpcException ex)
             {
@@ -400,7 +400,7 @@ namespace Neo.Network.Restful
             try
             {
                 Block block = hex.HexToBytes().AsSerializable<Block>();
-                return Ok(_restService.SubmitBlock(block));
+                return Ok(_queryService.SubmitBlock(block));
             }
             catch (RpcException ex)
             {
@@ -418,7 +418,7 @@ namespace Neo.Network.Restful
         [ProducesResponseType(typeof(JObject), 200)]
         public IActionResult ValidateAddress(string address)
         {
-            return Content(_restService.ValidateAddress(address).ToString(), "application/json");
+            return Content(_queryService.ValidateAddress(address).ToString(), "application/json");
         }
     }
 }
