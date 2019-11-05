@@ -112,7 +112,7 @@ namespace Neo.SmartContract.Manifest
         /// <returns>Return ContractManifest</returns>
         public static ContractManifest Parse(string json) => FromJson(JObject.Parse(json));
 
-        /// <summary
+        /// <summary>
         /// To json
         /// </summary>
         public JObject ToJson()

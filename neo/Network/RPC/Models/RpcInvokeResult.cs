@@ -33,7 +33,7 @@ namespace Neo.Network.RPC.Models
             invokeScriptResult.Script = json["script"].AsString();
             invokeScriptResult.State = json["state"].AsString();
             invokeScriptResult.GasConsumed = json["gas_consumed"].AsString();
-            invokeScriptResult.Tx = json["tx"].AsString();
+           // invokeScriptResult.Tx = json["tx"].AsString();
             invokeScriptResult.Stack = ((JArray)json["stack"]).Select(p => ContractParameter.FromJson(p)).ToArray();
             return invokeScriptResult;
         }

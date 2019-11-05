@@ -1,37 +1,89 @@
 using GraphQL.Types;
-using Neo.SmartContract;
+using Neo.Ledger;
+using Neo.SmartContract.Manifest;
+using Neo.IO.Json;
 
 namespace Neo.Network.GraphQL
 {
-    public class ContractsType : ObjectGraphType<Contract>
+    public class ContractsType : ObjectGraphType<ContractState>
     {
         public ContractsType()
         {
-            Field(x => x.Script, type: typeof(ListGraphType<ByteGraphType>));
-            Field(x => x.ParameterList, type: typeof(ContractParameterType));
-            Field(x => x.Address);
-            Field(x => x.ScriptHash, type: typeof(UInt160GraphType));
+            Field("Hash", x => x.ScriptHash.ToString());
+            Field("Script", x => x.Script.ToHexString());
+            Field(x => x.Manifest, type: typeof(ManifestType));
         }
     }
 
-    public class ContractParameterType : EnumerationGraphType
+    public class ManifestType : ObjectGraphType<ContractManifest>
     {
-        public ContractParameterType()
+        public ManifestType()
         {
-            Name = "ContractParameter";
-            AddValue("Signature", "", 0x00);
-            AddValue("Boolean", "", 0x00);
-            AddValue("Integer", "", 0x00);
-            AddValue("Hash160", "", 0x00);
-            AddValue("Hash256", "", 0x00);
-            AddValue("ByteArray", "", 0x00);
-            AddValue("PublicKey", "", 0x00);
-            AddValue("String", "", 0x00);
-            AddValue("Array", "", 0x00);
-            AddValue("Map", "", 0x00);
-            AddValue("InteropInterface", "", 0x00);
-            AddValue("Any", "", 0x00);
-            AddValue("Void", "", 0x00);
+            Field("Groups", x => x.Groups, type: typeof(ListGraphType<ContractGroupType>));
+            Field("Features", x => x.Features, type: typeof(ContractFeaturesType));
+            Field("Abi", x => x.Abi, type: typeof(ContractAbiType));
+            Field("Permissions", x => x.Permissions, type: typeof(ListGraphType<PermissionType>));
+            Field("trusts", x => x.Trusts, type: typeof(ListGraphType<StringGraphType>));
+            Field("safeMethods", x => x.SafeMethods, type: typeof(ListGraphType<StringGraphType>));
+        }
+    }
+
+    public class ContractGroupType : ObjectGraphType<ContractGroup>
+    {
+        public ContractGroupType()
+        {
+            Field("PubKey", x => x.PubKey.ToString());
+            Field("Signature", x => x.Signature.ToHexString());
+        }
+    }
+
+    public class ContractFeaturesType : EnumerationGraphType<ContractFeatures> { }
+
+    public class ContractAbiType : ObjectGraphType<ContractAbi>
+    {
+        public ContractAbiType()
+        {
+            Field("Hash", x => x.Hash.ToString());
+            Field(x => x.EntryPoint, type: typeof(MethodDescriptorType));
+            Field("Methods", x => x.Methods, type: typeof(ListGraphType<MethodDescriptorType>));
+            Field("Events", x => x.Events, type: typeof(ListGraphType<EventDescriptorType>));
+        }
+    }
+
+    public class MethodDescriptorType : ObjectGraphType<ContractMethodDescriptor>
+    {
+        public MethodDescriptorType()
+        {
+            Field(x => x.Name);
+            Field("Parameters", x => x.Parameters, type: typeof(ListGraphType<ParameterDefinitionType>));
+            Field("ReturnType", x => x.ReturnType.ToString());
+        }
+    }
+
+    public class EventDescriptorType : ObjectGraphType<ContractEventDescriptor>
+    {
+        public EventDescriptorType()
+        {
+            Field(x => x.Name);
+            Field("Parameters", x => x.Parameters, type: typeof(ListGraphType<ParameterDefinitionType>));
+        }
+    }
+
+    public class ParameterDefinitionType : ObjectGraphType<ContractParameterDefinition>
+    {
+        public ParameterDefinitionType()
+        {
+            Field(x => x.Name);
+            Field("Type", x => x.Type.ToString());
+        }
+    }
+
+    public class PermissionType : ObjectGraphType<ContractPermission>
+    {
+        public PermissionType()
+        {
+            Field("Contract", x => (JString)x.Contract.ToJson(), type: typeof(StringGraphType));
+            Field(x => x.Methods, type: typeof(ListGraphType<StringGraphType>));
         }
     }
 }

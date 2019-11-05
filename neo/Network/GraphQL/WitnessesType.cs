@@ -1,5 +1,6 @@
 using GraphQL.Types;
 using Neo.Network.P2P.Payloads;
+using Neo.Wallets;
 
 namespace Neo.Network.GraphQL
 {
@@ -7,10 +8,8 @@ namespace Neo.Network.GraphQL
     {
         public WitnessesType()
         {
-            Field(x => x.InvocationScript, type: typeof(ListGraphType<ByteGraphType>));
-            Field(x => x.VerificationScript, type: typeof(ListGraphType<ByteGraphType>));
+            Field("Invocation", x => x.InvocationScript.ToHexString());
+            Field("Verification", x => x.VerificationScript.ToHexString());
         }
     }
-
-    
 }

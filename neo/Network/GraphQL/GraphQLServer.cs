@@ -30,7 +30,6 @@ namespace Neo.Network.GraphQL
             this.Wallet = wallet;
             this.MaxGasInvoke = maxGasInvoke;
         }
-
         public void Dispose()
         {
             if (host != null)
