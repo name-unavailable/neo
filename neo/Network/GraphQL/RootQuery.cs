@@ -169,7 +169,7 @@ namespace Neo.Network.GraphQL
             ), resolve: context =>
             {
                 var scriptHash = UInt160.Parse(context.GetArgument<string>("scriptHash"));
-                var key = context.GetArgument<string>("scriptHash").HexToBytes();
+                var key = context.GetArgument<string>("key").HexToBytes();
                 return queryService.GetStorage(scriptHash, key)?.AsString();
             });
         }
