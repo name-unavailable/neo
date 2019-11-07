@@ -4,7 +4,7 @@ using Neo.SmartContract;
 
 namespace Neo.Network.Restful
 {
-    public interface IRestService
+    public interface IQueryService
     {
         string GetBestBlockHash();
 

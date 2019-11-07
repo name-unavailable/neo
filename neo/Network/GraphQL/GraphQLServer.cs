@@ -62,7 +62,7 @@ namespace Neo.Network.GraphQL
             {
                 services.AddScoped<IDependencyResolver>
                            (s => new FuncDependencyResolver(s.GetRequiredService));
-                services.AddScoped<IRestService, RestService>(s => new RestService(system, Wallet, MaxGasInvoke));
+                services.AddScoped<IQueryService, QueryService>(s => new QueryService(system, Wallet, MaxGasInvoke));
                 services.AddScoped<RootSchema>();
                 services.AddGraphQL().AddGraphTypes(ServiceLifetime.Scoped);
 

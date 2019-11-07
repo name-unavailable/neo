@@ -9,7 +9,7 @@ namespace Neo.Network.GraphQL
         {
             Field(x => x.Name);
             Field(x => x.Version);
-            Field(x => Interfaces, type: typeof(ListGraphType<StringGraphType>));
+            Field(x => x.Interfaces, type: typeof(ListGraphType<StringGraphType>));
         }
     }
 }
