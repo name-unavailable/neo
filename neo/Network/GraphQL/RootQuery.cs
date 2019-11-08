@@ -8,9 +8,53 @@ using System.Linq;
 using System.Collections.Generic;
 using Neo.SmartContract;
 using Neo.Ledger;
+using System;
+using GraphQL;
 
 namespace Neo.Network.GraphQL
 {
+    public class RootMutation : ObjectGraphType
+    {
+        public RootMutation(IQueryService queryService)
+        {
+            Field<BooleanGraphType>("txbroadcasting", 
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "hex" }
+            ), resolve: context =>
+            {
+                try
+                {
+                    var hex = context.GetArgument<string>("hex");
+                    Transaction tx = hex.HexToBytes().AsSerializable<Transaction>();
+                    return queryService.SendRawTransaction(tx).AsBoolean();
+                }
+                catch (Exception ex)
+                {
+                    context.Errors.Add(new ExecutionError(ex.Message));
+                    return false;
+                }
+            });
+
+            Field<BooleanGraphType>("blockrelaying", 
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "hex" }
+            ), resolve: context =>
+            {
+                try
+                {
+                    var hex = context.GetArgument<string>("hex");
+                    Block block = hex.HexToBytes().AsSerializable<Block>();
+                    return queryService.SubmitBlock(block).AsBoolean();
+                }
+                catch (Exception ex)
+                {
+                    context.Errors.Add(new ExecutionError(ex.Message));
+                    return false;
+                }
+            });
+        }
+    }
+
     public class RootQuery : ObjectGraphType
     {
         public RootQuery(IQueryService queryService)
@@ -25,15 +69,15 @@ namespace Neo.Network.GraphQL
             ), resolve: context =>
             {
                 uint? index = context.GetArgument<uint>("index");
-                bool verbose = true;
+                bool isVerbose = true;
                 if (index != null)
                 {
-                    return RpcBlock.FromJson(queryService.GetBlock(index, verbose));
+                    return RpcBlock.FromJson(queryService.GetBlock(index, isVerbose));
                 }
                 else
                 {
                     JObject hash = new JString(context.GetArgument<string>("hash"));
-                    return Block.FromJson(queryService.GetBlock(hash, verbose));
+                    return RpcBlock.FromJson(queryService.GetBlock(hash, isVerbose));
                 }
             });
 
@@ -142,27 +186,7 @@ namespace Neo.Network.GraphQL
                 return RpcInvokeResult.FromJson(queryService.InvokeFunction(script_hash, operation, args));
             });
 
-            Field<BooleanGraphType>("txbroadcasting", //
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "hex" }
-            ), resolve: context =>
-            {
-                var hex = context.GetArgument<string>("hex");
-                Transaction tx = hex.HexToBytes().AsSerializable<Transaction>();
-                return queryService.SendRawTransaction(tx).AsBoolean();
-            });
-
-            Field<BooleanGraphType>("blockrelaying", //
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "hex" }
-            ), resolve: context =>
-            {
-                var hex = context.GetArgument<string>("hex");
-                Block block = hex.HexToBytes().AsSerializable<Block>();
-                return queryService.SubmitBlock(block).AsBoolean();
-            });
-
-            Field<StringGraphType>("getstorage", //
+            Field<StringGraphType>("getstorage",
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "scriptHash" },
                     new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "key" }

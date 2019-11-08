@@ -9,6 +9,7 @@ namespace Neo.Network.GraphQL
            base(resolver)
         {
             Query = resolver.Resolve<RootQuery>();
+            Mutation = resolver.Resolve<RootMutation>();
         }
     }
 }
