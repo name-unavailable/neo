@@ -12,6 +12,7 @@ namespace Neo.Plugins
     {
         public static readonly List<Plugin> Plugins = new List<Plugin>();
         private static readonly List<ILogPlugin> Loggers = new List<ILogPlugin>();
+        internal static readonly List<IServer> Servers = new List<IServer>();
         internal static readonly List<IRpcPlugin> RpcPlugins = new List<IRpcPlugin>();
         internal static readonly List<IPersistencePlugin> PersistencePlugins = new List<IPersistencePlugin>();
         internal static readonly List<IP2PPlugin> P2PPlugins = new List<IP2PPlugin>();
@@ -52,6 +53,8 @@ namespace Neo.Plugins
             if (this is IRpcPlugin rpc) RpcPlugins.Add(rpc);
             if (this is IPersistencePlugin persistence) PersistencePlugins.Add(persistence);
             if (this is IMemoryPoolTxObserverPlugin txObserver) TxObserverPlugins.Add(txObserver);
+
+            if (this is IServer server) Servers.Add(server);
 
             Configure();
         }

@@ -1099,6 +1099,9 @@ namespace Neo.Shell
                     sslCert: Settings.Default.Graph.SslCert,
                     password: Settings.Default.Graph.SslCertPassword,
                     maxGasInvoke: Settings.Default.Graph.MaxGasInvoke);
+
+                // after rpc move to plugin
+                system.StartServers(Program.Wallet);
             }
         }
 

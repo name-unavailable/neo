@@ -95,6 +95,18 @@ namespace Neo
             RpcServer.Start(bindAddress, port, sslCert, password, trustedAuthorities);
         }
 
+        /// <summary>
+        /// start server plugins
+        /// </summary>
+        /// <param name="wallet"></param>
+        public void StartServers(Wallet wallet = null)
+        {
+            foreach (var server in Plugin.Servers)
+            {
+                server.Start(this, wallet);
+            }
+        }
+
         public void StartRest(IPAddress bindAddress, int port, Wallet wallet = null, string sslCert = null, string password = null,
             string[] trustedAuthorities = null, long maxGasInvoke = default)
         {
