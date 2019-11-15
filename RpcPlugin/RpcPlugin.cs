@@ -6,12 +6,12 @@ namespace RpcPlugin
 {
     public class RpcPlugin : Plugin, IServer
     {
-        private RpcSettings rpcSetting;
+        private Settings rpcSetting;
         private RpcServer rpcServer;
 
         public override void Configure()
         {
-            this.rpcSetting = new RpcSettings(GetConfiguration());
+            this.rpcSetting = new Settings(GetConfiguration());
         }
 
         public void Start(NeoSystem neoSystem, Wallet wallet)

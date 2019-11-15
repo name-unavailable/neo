@@ -42,7 +42,7 @@ namespace Neo.Network.RPC
 
                 if (response.Error != null)
                 {
-                    throw new RpcException(response.Error.Code, response.Error.Message);
+                    throw new QueryException(response.Error.Code, response.Error.Message);
                 }
 
                 return response;

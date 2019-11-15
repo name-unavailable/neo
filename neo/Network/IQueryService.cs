@@ -2,7 +2,7 @@ using Neo.IO.Json;
 using Neo.Network.P2P.Payloads;
 using Neo.SmartContract;
 
-namespace Neo.Network.Restful
+namespace Neo.Network
 {
     public interface IQueryService
     {

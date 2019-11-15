@@ -1,6 +1,7 @@
 using Akka.Actor;
 using Neo.Consensus;
 using Neo.Ledger;
+using Neo.Network;
 using Neo.Network.P2P;
 using Neo.Network.Restful;
 using Neo.Network.GraphQL;
@@ -10,6 +11,7 @@ using Neo.Plugins;
 using Neo.Wallets;
 using System;
 using System.Net;
+using System.Collections.Generic;
 
 namespace Neo
 {
@@ -26,9 +28,11 @@ namespace Neo
         public IActorRef LocalNode { get; }
         internal IActorRef TaskManager { get; }
         public IActorRef Consensus { get; private set; }
-        public RpcServer RpcServer { get; private set; }
-        public RestServer RestServer { get; private set; }
-        public GraphQLServer GraphQLServer { get; private set; }
+        public List<IServer> servers { get; private set; }
+        public QueryServer queryServer { get; private set; }
+        // public RpcServer RpcServer { get; private set; }
+        // public RestServer RestServer { get; private set; }
+        // public GraphQLServer GraphQLServer { get; private set; }
 
         private readonly Store store;
         private ChannelsConfig start_message = null;
@@ -46,7 +50,8 @@ namespace Neo
 
         public void Dispose()
         {
-            RpcServer?.Dispose();
+            queryServer?.Dispose();
+            // RpcServer?.Dispose();
             EnsureStoped(LocalNode);
             // Dispose will call ActorSystem.Terminate()
             ActorSystem.Dispose();
@@ -88,12 +93,12 @@ namespace Neo
             }
         }
 
-        public void StartRpc(IPAddress bindAddress, int port, Wallet wallet = null, string sslCert = null, string password = null,
-            string[] trustedAuthorities = null, long maxGasInvoke = default)
-        {
-            RpcServer = new RpcServer(this, wallet, maxGasInvoke);
-            RpcServer.Start(bindAddress, port, sslCert, password, trustedAuthorities);
-        }
+        // public void StartRpc(IPAddress bindAddress, int port, Wallet wallet = null, string sslCert = null, string password = null,
+        //     string[] trustedAuthorities = null, long maxGasInvoke = default)
+        // {
+        //     RpcServer = new RpcServer(this, wallet, maxGasInvoke);
+        //     RpcServer.Start(bindAddress, port, sslCert, password, trustedAuthorities);
+        // }
 
         /// <summary>
         /// start server plugins
@@ -107,19 +112,19 @@ namespace Neo
             }
         }
 
-        public void StartRest(IPAddress bindAddress, int port, Wallet wallet = null, string sslCert = null, string password = null,
-            string[] trustedAuthorities = null, long maxGasInvoke = default)
-        {
-            RestServer = new RestServer(this, wallet, maxGasInvoke);
-            RestServer.Start(bindAddress, port, sslCert, password, trustedAuthorities);
-        }
+        // public void StartRest(IPAddress bindAddress, int port, Wallet wallet = null, string sslCert = null, string password = null,
+        //     string[] trustedAuthorities = null, long maxGasInvoke = default)
+        // {
+        //     RestServer = new RestServer(this, wallet, maxGasInvoke);
+        //     RestServer.Start(bindAddress, port, sslCert, password, trustedAuthorities);
+        // }
 
-        public void StartGraphQL(IPAddress bindAddress, int port, Wallet wallet = null, string sslCert = null, string password = null,
-            string[] trustedAuthorities = null, long maxGasInvoke = default)
-        {
-            GraphQLServer = new GraphQLServer(this, wallet, maxGasInvoke);
-            GraphQLServer.Start(bindAddress, port, sslCert, password, trustedAuthorities);
-        }
+        // public void StartGraphQL(IPAddress bindAddress, int port, Wallet wallet = null, string sslCert = null, string password = null,
+        //     string[] trustedAuthorities = null, long maxGasInvoke = default)
+        // {
+        //     GraphQLServer = new GraphQLServer(this, wallet, maxGasInvoke);
+        //     GraphQLServer.Start(bindAddress, port, sslCert, password, trustedAuthorities);
+        // }
 
         internal void SuspendNodeStartup()
         {

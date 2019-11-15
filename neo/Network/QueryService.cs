@@ -4,7 +4,7 @@ using Neo.Network.RPC.Models;
 using Neo.SmartContract;
 using Neo.Wallets;
 
-namespace Neo.Network.Restful
+namespace Neo.Network
 {
     public class QueryService : QueryServer, IQueryService
     {

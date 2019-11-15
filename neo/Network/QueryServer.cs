@@ -15,11 +15,14 @@ using Neo.Wallets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Neo.Network
 {
-    public class QueryServer
+    public class QueryServer: IDisposable
     {
+
+        protected IWebHost host;
         public Wallet Wallet { get; set; }
         public long MaxGasInvoke { get; protected set; }
         public NeoSystem NeoSystem { get; protected set; }
@@ -29,6 +32,15 @@ namespace Neo.Network
             NeoSystem = system;
             Wallet = wallet;
             MaxGasInvoke = maxGasInvoke;
+        }
+
+        public void Dispose()
+        {
+            if (host != null)
+            {
+                host.Dispose();
+                host = null;
+            }
         }
 
         protected JObject GetBestBlockHash()
@@ -48,7 +60,7 @@ namespace Neo.Network
                 }
                 else
                 {
-                    throw new RpcException(-100, "Invalid Height");
+                    throw new QueryException(-100, "Invalid Height");
                 }
             }
             else
@@ -57,7 +69,7 @@ namespace Neo.Network
                 block = Blockchain.Singleton.Store.GetBlock(hash);
             }
             if (block == null)
-                throw new RpcException(-100, "Unknown block");
+                throw new QueryException(-100, "Unknown block");
             if (verbose)
             {
                 JObject json = block.ToJson();
@@ -81,7 +93,7 @@ namespace Neo.Network
             {
                 return Blockchain.Singleton.GetBlockHash(height).ToString();
             }
-            throw new RpcException(-100, "Invalid Height");
+            throw new QueryException(-100, "Invalid Height");
         }
 
         protected JObject GetBlockHeader(JObject key, bool verbose)
@@ -98,7 +110,7 @@ namespace Neo.Network
                 header = Blockchain.Singleton.Store.GetHeader(hash);
             }
             if (header == null)
-                throw new RpcException(-100, "Unknown block");
+                throw new QueryException(-100, "Unknown block");
 
             if (verbose)
             {
@@ -120,7 +132,7 @@ namespace Neo.Network
                 {
                     return engine.ResultStack.Peek().GetBigInteger().ToString();
                 }
-            throw new RpcException(-100, "Invalid Height");
+            throw new QueryException(-100, "Invalid Height");
         }
 
         protected JObject GetConnectionCount()
@@ -131,7 +143,7 @@ namespace Neo.Network
         protected JObject GetContractState(UInt160 script_hash)
         {
             ContractState contract = Blockchain.Singleton.Store.GetContracts().TryGet(script_hash);
-            return contract?.ToJson() ?? throw new RpcException(-100, "Unknown contract");
+            return contract?.ToJson() ?? throw new QueryException(-100, "Unknown contract");
         }
 
         protected JObject GetPeers()
@@ -174,7 +186,7 @@ namespace Neo.Network
         {
             Transaction tx = Blockchain.Singleton.GetTransaction(hash);
             if (tx == null)
-                throw new RpcException(-100, "Unknown transaction");
+                throw new QueryException(-100, "Unknown transaction");
             if (verbose)
             {
                 JObject json = tx.ToJson();
@@ -205,7 +217,7 @@ namespace Neo.Network
         {
             uint? height = Blockchain.Singleton.Store.GetTransactions().TryGet(hash)?.BlockIndex;
             if (height.HasValue) return height.Value;
-            throw new RpcException(-100, "Unknown transaction");
+            throw new QueryException(-100, "Unknown transaction");
         }
 
         protected JObject GetValidators()
@@ -322,17 +334,17 @@ namespace Neo.Network
                         return ret;
                     }
                 case RelayResultReason.AlreadyExists:
-                    throw new RpcException(-501, "Block or transaction already exists and cannot be sent repeatedly.");
+                    throw new QueryException(-501, "Block or transaction already exists and cannot be sent repeatedly.");
                 case RelayResultReason.OutOfMemory:
-                    throw new RpcException(-502, "The memory pool is full and no more transactions can be sent.");
+                    throw new QueryException(-502, "The memory pool is full and no more transactions can be sent.");
                 case RelayResultReason.UnableToVerify:
-                    throw new RpcException(-503, "The block cannot be validated.");
+                    throw new QueryException(-503, "The block cannot be validated.");
                 case RelayResultReason.Invalid:
-                    throw new RpcException(-504, "Block or transaction validation failed.");
+                    throw new QueryException(-504, "Block or transaction validation failed.");
                 case RelayResultReason.PolicyFail:
-                    throw new RpcException(-505, "One of the Policy filters failed.");
+                    throw new QueryException(-505, "One of the Policy filters failed.");
                 default:
-                    throw new RpcException(-500, "Unknown error.");
+                    throw new QueryException(-500, "Unknown error.");
             }
         }
     }

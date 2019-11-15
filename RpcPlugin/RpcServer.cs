@@ -28,8 +28,6 @@ namespace RpcPlugin
 {
     public sealed class RpcServer : QueryServer, IDisposable
     {
-        private IWebHost host;
-
         public RpcServer(NeoSystem system, Wallet wallet = null, long maxGasInvoke = default) : base(system, wallet, maxGasInvoke) { }
 
         private static JObject CreateErrorResponse(JObject id, int code, string message, JObject data = null)
@@ -49,15 +47,6 @@ namespace RpcPlugin
             response["jsonrpc"] = "2.0";
             response["id"] = id;
             return response;
-        }
-
-        public void Dispose()
-        {
-            if (host != null)
-            {
-                host.Dispose();
-                host = null;
-            }
         }
 
         private JObject GetInvokeResult(byte[] script, IVerifiable checkWitnessHashes = null)
@@ -89,17 +78,17 @@ namespace RpcPlugin
                         return ret;
                     }
                 case RelayResultReason.AlreadyExists:
-                    throw new RpcException(-501, "Block or transaction already exists and cannot be sent repeatedly.");
+                    throw new QueryException(-501, "Block or transaction already exists and cannot be sent repeatedly.");
                 case RelayResultReason.OutOfMemory:
-                    throw new RpcException(-502, "The memory pool is full and no more transactions can be sent.");
+                    throw new QueryException(-502, "The memory pool is full and no more transactions can be sent.");
                 case RelayResultReason.UnableToVerify:
-                    throw new RpcException(-503, "The block cannot be validated.");
+                    throw new QueryException(-503, "The block cannot be validated.");
                 case RelayResultReason.Invalid:
-                    throw new RpcException(-504, "Block or transaction validation failed.");
+                    throw new QueryException(-504, "Block or transaction validation failed.");
                 case RelayResultReason.PolicyFail:
-                    throw new RpcException(-505, "One of the Policy filters failed.");
+                    throw new QueryException(-505, "One of the Policy filters failed.");
                 default:
-                    throw new RpcException(-500, "Unknown error.");
+                    throw new QueryException(-500, "Unknown error.");
             }
         }
 
@@ -218,7 +207,7 @@ namespace RpcPlugin
                         return ValidateAddress(address);
                     }
                 default:
-                    throw new RpcException(-32601, "Method not found");
+                    throw new QueryException(-32601, "Method not found");
             }
         }
 

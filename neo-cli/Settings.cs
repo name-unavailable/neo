@@ -10,9 +10,8 @@ namespace Neo
     {
         public PathsSettings Paths { get; }
         public P2PSettings P2P { get; }
-        public RPCSettings RPC { get; }
-        public RPCSettings Rest { get; }
-        public RPCSettings Graph { get; }
+        // public RPCSettings Rest { get; }
+        // public RPCSettings Graph { get; }
         public UnlockWalletSettings UnlockWallet { get; }
         public string PluginURL { get; }
 
@@ -46,9 +45,8 @@ namespace Neo
         {
             this.Paths = new PathsSettings(section.GetSection("Paths"));
             this.P2P = new P2PSettings(section.GetSection("P2P"));
-            this.RPC = new RPCSettings(section.GetSection("RPC"));
-            this.Rest = new RPCSettings(section.GetSection("Rest"));
-            this.Graph = new RPCSettings(section.GetSection("Graph"));
+            // this.Rest = new RPCSettings(section.GetSection("Rest"));
+            // this.Graph = new RPCSettings(section.GetSection("Graph"));
             this.UnlockWallet = new UnlockWalletSettings(section.GetSection("UnlockWallet"));
             this.PluginURL = section.GetSection("PluginURL").Value;
         }

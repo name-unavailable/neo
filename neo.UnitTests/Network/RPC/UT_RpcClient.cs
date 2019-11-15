@@ -16,6 +16,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Neo.Network;
 
 namespace Neo.UnitTests.Network.RPC
 {
@@ -85,7 +86,7 @@ namespace Neo.UnitTests.Network.RPC
             {
                 var result = rpc.GetBlockHex("773dd2dae4a9c9275290f89b56e67d7363ea4826dfd4fc13cc01cf73a44b0d0e");
             }
-            catch (RpcException ex)
+            catch (QueryException ex)
             {
                 Assert.AreEqual(-32700, ex.HResult);
                 Assert.AreEqual("Parse error", ex.Message);

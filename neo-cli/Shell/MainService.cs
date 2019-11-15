@@ -430,7 +430,7 @@ namespace Neo.Shell
                 Console.WriteLine("error");
                 return true;
             }
-            if (system.RpcServer != null)
+            if (system.servers != null)
             {
                 if (!ReadUserInput("Warning: Opening the wallet with RPC turned on could result in asset loss. Are you sure you want to do this? (yes|no)", false).IsYes())
                 {
@@ -458,8 +458,8 @@ namespace Neo.Shell
                         WalletAccount account = Program.Wallet.CreateAccount();
                         Console.WriteLine($"address: {account.Address}");
                         Console.WriteLine($" pubkey: {account.GetKey().PublicKey.EncodePoint(true).ToHexString()}");
-                        if (system.RpcServer != null)
-                            system.RpcServer.Wallet = Program.Wallet;
+                        if (system.servers != null)
+                            system.queryServer.Wallet = Program.Wallet;
                     }
                     break;
                 case ".json":
@@ -471,8 +471,8 @@ namespace Neo.Shell
                         Program.Wallet = wallet;
                         Console.WriteLine($"address: {account.Address}");
                         Console.WriteLine($" pubkey: {account.GetKey().PublicKey.EncodePoint(true).ToHexString()}");
-                        if (system.RpcServer != null)
-                            system.RpcServer.Wallet = Program.Wallet;
+                        if (system.servers != null)
+                            system.queryServer.Wallet = Program.Wallet;
                     }
                     break;
                 default:
@@ -812,7 +812,7 @@ namespace Neo.Shell
                 Console.WriteLine("error");
                 return true;
             }
-            if (system.RpcServer != null)
+            if (system.servers != null)
             {
                 if (!ReadUserInput("Warning: Opening the wallet with RPC turned on could result in asset loss. Are you sure you want to do this? (yes|no)", false).IsYes())
                 {
@@ -839,8 +839,8 @@ namespace Neo.Shell
             {
                 Console.WriteLine($"failed to open file \"{path}\"");
             }
-            if (system.RpcServer != null)
-                system.RpcServer.Wallet = Program.Wallet;
+            if (system.servers != null)
+                system.queryServer.Wallet = Program.Wallet;
             return true;
         }
 
@@ -873,9 +873,9 @@ namespace Neo.Shell
                 return true;
             }
             Program.Wallet = null;
-            if (system.RpcServer != null)
+            if (system.servers != null)
             {
-                system.RpcServer.Wallet = null;
+                system.queryServer.Wallet = null;
             }
             Console.WriteLine($"Wallet is closed");
             return true;
@@ -1081,24 +1081,24 @@ namespace Neo.Shell
             }
             if (useRPC)
             {
-                system.StartRpc(Settings.Default.RPC.BindAddress,
-                    Settings.Default.RPC.Port,
-                    wallet: Program.Wallet,
-                    sslCert: Settings.Default.RPC.SslCert,
-                    password: Settings.Default.RPC.SslCertPassword,
-                    maxGasInvoke: Settings.Default.RPC.MaxGasInvoke);
-                system.StartRest(Settings.Default.Rest.BindAddress,
-                    Settings.Default.Rest.Port,
-                    wallet: Program.Wallet,
-                    sslCert: Settings.Default.Rest.SslCert,
-                    password: Settings.Default.Rest.SslCertPassword,
-                    maxGasInvoke: Settings.Default.Rest.MaxGasInvoke);
-                system.StartGraphQL(Settings.Default.Rest.BindAddress,
-                    Settings.Default.Graph.Port,
-                    wallet: Program.Wallet,
-                    sslCert: Settings.Default.Graph.SslCert,
-                    password: Settings.Default.Graph.SslCertPassword,
-                    maxGasInvoke: Settings.Default.Graph.MaxGasInvoke);
+                // system.StartRpc(Settings.Default.RPC.BindAddress,
+                //     Settings.Default.RPC.Port,
+                //     wallet: Program.Wallet,
+                //     sslCert: Settings.Default.RPC.SslCert,
+                //     password: Settings.Default.RPC.SslCertPassword,
+                //     maxGasInvoke: Settings.Default.RPC.MaxGasInvoke);
+                // system.StartRest(Settings.Default.Rest.BindAddress,
+                //     Settings.Default.Rest.Port,
+                //     wallet: Program.Wallet,
+                //     sslCert: Settings.Default.Rest.SslCert,
+                //     password: Settings.Default.Rest.SslCertPassword,
+                //     maxGasInvoke: Settings.Default.Rest.MaxGasInvoke);
+                // system.StartGraphQL(Settings.Default.Rest.BindAddress,
+                //     Settings.Default.Graph.Port,
+                //     wallet: Program.Wallet,
+                //     sslCert: Settings.Default.Graph.SslCert,
+                //     password: Settings.Default.Graph.SslCertPassword,
+                //     maxGasInvoke: Settings.Default.Graph.MaxGasInvoke);
 
                 // after rpc move to plugin
                 system.StartServers(Program.Wallet);

@@ -5,9 +5,10 @@ using Neo.Network.P2P.Payloads;
 using Neo.SmartContract;
 using System.Linq;
 using System;
-using Neo.Network.RPC;
+using Neo.Network;
+using Neo;
 
-namespace Neo.Network.Restful
+namespace RestPlugin
 {
     [Route("")]
     [Produces("application/json")]

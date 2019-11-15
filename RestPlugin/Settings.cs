@@ -3,9 +3,9 @@ using Neo;
 using Neo.SmartContract.Native;
 using System.Net;
 
-namespace RpcPlugin
+namespace RestPlugin
 {
-    public class RpcSettings
+    public class Settings
     {
         public IPAddress BindAddress { get; }
         public ushort Port { get; }
@@ -13,7 +13,7 @@ namespace RpcPlugin
         public string SslCertPassword { get; }
         public long MaxGasInvoke { get; }
 
-        public RpcSettings(IConfigurationSection section)
+        public Settings(IConfigurationSection section)
         {
             this.BindAddress = IPAddress.Parse(section.GetSection("BindAddress").Value);
             this.Port = ushort.Parse(section.GetSection("Port").Value);
