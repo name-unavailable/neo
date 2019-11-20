@@ -1,23 +1,23 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
 using GraphQL;
 using GraphQL.Server;
 using GraphQL.Server.Ui.Playground;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
+using Microsoft.Extensions.DependencyInjection;
+using Neo;
+using Neo.Network;
 using Neo.Wallets;
 using System;
 using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
-using Neo;
-using Neo.Network;
 
 namespace GraphqlPlugin
 {
-    public class GraphQLServer : QueryServer, IDisposable
+    public class GraphQLServer : QueryServer
     {
         public GraphQLServer(NeoSystem system, Wallet wallet = null, long maxGasInvoke = default) : base(system, wallet, maxGasInvoke) { }
 
@@ -47,7 +47,6 @@ namespace GraphqlPlugin
                 services.AddScoped<IQueryService, QueryService>(s => new QueryService(NeoSystem, Wallet, MaxGasInvoke));
                 services.AddScoped<RootSchema>();
                 services.AddGraphQL().AddGraphTypes(ServiceLifetime.Scoped);
-
                 services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             })
             .Configure(app =>

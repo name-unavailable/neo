@@ -89,8 +89,7 @@ namespace Neo.Plugins
             if (!Directory.Exists(pluginsPath)) return;
             foreach (string filename in Directory.EnumerateFiles(pluginsPath, "*.dll", SearchOption.TopDirectoryOnly))
             {
-                var file = File.ReadAllBytes(filename);
-                Assembly assembly = Assembly.Load(file);
+                Assembly assembly = Assembly.LoadFrom(filename);
                 foreach (Type type in assembly.ExportedTypes)
                 {
                     if (!type.IsSubclassOf(typeof(Plugin))) continue;
